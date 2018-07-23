@@ -19,6 +19,8 @@ X=[x*dX for x in range(nX)] #list of possible traits
 K = 1000    # Maximal capacity of the system
 C = 0.5     # Competition
 p = 0.03    # Probability of mutation
+beta=0
+mu=1
 
 sigma = 0.1     # variance of the mutation kernel
 
@@ -38,15 +40,24 @@ def b(x):   # Birth rate function
 def d(x):   # Death rate function
     return 1
 
-# Compute the probability of birth, death and horizontal transfer events
+def Ntot(N,t):#number of individual, at time t for population N
+    return sum(N[t])
 
-def death_prob(x, nx):
+def death_prob(x, Ntot):
     # nx = number of individuals in a population with a trait x
     # C = Constant competition rate
-    return d(x) + nx*C
+    return d(x) + Ntot*C
 
-def horizontal_transfer(x, y, nu):
-    # x = "donor" trait
-    # y = "recepient" trait
-    # nu = 
-    return 0 
+# Compute the probability of birth, death and horizontal transfer events
+
+def tau(x,y):#function tau
+    if (x<y): 
+        return 1 
+    else:
+        return 0
+    
+def horizontal_transfer(x, y, Ntot):#HT rate, i.e tau/(beta+mu*Ntot)
+    return tau(x,y)/(beta+mu*Ntot)
+
+
+

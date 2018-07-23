@@ -6,3 +6,6 @@ Created on Mon Jul 23 16:20:08 2018
 @author: samuelnordmann
 """
 
+
+def lambda (N,x):
+    
