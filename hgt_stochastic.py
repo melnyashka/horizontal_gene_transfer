@@ -1,7 +1,6 @@
 # Import packages here
 
 import numpy as np
-import random as rnd
 
 # Auxiliary part
 T_max= 10 #Maximal time
@@ -23,12 +22,20 @@ mu = 1      #
 
 sigma = 0.1     # variance of the mutation kernel
 
-N_0 = 1000*rnd.gauss(1, K) # Initial number of populations 
+N_0 = 1000 # Initial size of the population
+def init_population(N_0):
+    N_p = [None]*nX
+    for i in range(0,nX):
+        if i == 0:
+            N_p[i] = np.random.randint(0, N_0)
+        else:
+            N_p[i] = np.random.randint(0, N_0-sum(N_p[0:i]))
+    return N_p
 
-N = [[0] * nX for _ in range(nT)] #Intialization of the population. Matrix T*X
+N = [[0] * nX for _ in range(nT)] # Initialization of the population. Matrix T*X
 
 def mut_kern(x):
-    return rnd.gauss(0, sigma^2)
+    return np.random.normal(0, sigma^2)
 
 def b(x):   # Birth rate function
     return 4-x
@@ -37,7 +44,7 @@ def d(x):   # Death rate function
     return 1
 
 def death_prob(x, Ntot):
-    # nx = number of individuals in a population with a trait x
+    # Ntot = total size of the population
     # C = Constant competition rate
     return d(x) + Ntot*C
 
