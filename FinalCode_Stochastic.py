@@ -31,13 +31,16 @@ sigma = 0.1     # variance of the mutation kernel
 #INITIAL TIME
 N0=[0 for x in X]
 Ntot0=1000  #initial size of population
-N = np.zeros([nT,nX]) # history of population sizes
+N = np.zeros([nT,nX], dtype = int) # history of population sizes
 
 m=1#Initial law of repartition. Gaussian centered at m with variance sigma0^2
 sigma0=0.1
 X_weighted= list(map(lambda z: np.exp(-((m-z)/sigma0)**2), X))
 S=sum(X_weighted)
 Initial_repartition=list(map(lambda z: z/S, X_weighted))    #law of repartition
+
+def resc_x(x):#rescale a trait to a position in the vector X
+    return int(x/dX)
     
 x=np.random.choice(X, size=Ntot0, replace=True, p=Initial_repartition)#choice of Ntot random variable with respect to the law
 for y in x:
@@ -70,13 +73,6 @@ def tau(x,y):   # function tau
     
 def horizontal_transfer(x, y, Ntot):    # HT rate, i.e tau/(beta+mu*Ntot)
     return tau(x,y)/(beta+mu*Ntot)
-
-
-
-
-
-def resc_x(x):#rescale a trait to a position in the vector X
-    return int(x/dX)
 
 #Defining the events of death, birth, and HT
 
