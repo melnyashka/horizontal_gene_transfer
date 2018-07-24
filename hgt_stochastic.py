@@ -27,22 +27,20 @@ sigma = 0.1     # variance of the mutation kernel
 
 #INITIAL TIME
 N0=[0 for x in X]
-Ntot0=1000#initial size of population
+Ntot0=1000  #initial size of population
+N = np.zeros([nT,nX]) # history of population sizes
 
 m=1#Initial law of repartition. Gaussian centered at m with variance sigma0^2
 sigma0=0.1
 X_weighted= list(map(lambda z: np.exp(-((m-z)/sigma0)**2), X))
 S=sum(X_weighted)
-Initial_repartition=list(map(lambda z: z/S, X_weighted))#law of repartition
+Initial_repartition=list(map(lambda z: z/S, X_weighted))    #law of repartition
     
 x=np.random.choice(X, size=Ntot0, replace=True, p=Initial_repartition)#choice of Ntot random variable with respect to the law
 for y in x:
     N0[resc_x(y)]+=1#creation of the vector of the initial population
 
-
-
-
-
+N[0,] = N0
 
 #################################################
 
