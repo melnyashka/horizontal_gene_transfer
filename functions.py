@@ -15,8 +15,8 @@ def resc_x(x):#rescale a trait to a position in the vector X
 
 #Defining the events of death, birth, and HT
 
-def death(n,t,x):#at time t, this function kills an individual x in the population n
-    n[t][resc_x(x)]-=1#modifies in place
+def death(n,x):#at time t, this function kills an individual x in the population n
+    n[resc_x(x)]-=1#modifies in place
 
 
 def mutation_kernel(x):#Define the mutation kernel centered at x
@@ -24,13 +24,13 @@ def mutation_kernel(x):#Define the mutation kernel centered at x
     S=sum(X_weighted)
     return list(map(lambda z: z/S, X_weighted))
 
-def birth(n,t,x):#Process of birth of an individual x at time t in the population n
+def birth(n,x):#Process of birth of an individual x at time t in the population n
     mutation=np.random.binomial(1, p, size=None)==0#Boolean, true if mutation.
     if mutation:
         x_new=np.random.choice(X, size=None, replace=False, p=mutation_kernel(x))#choice of the new trait
-        n[t][resc_x(x_new)]+=1 #new individual
+        n[resc_x(x_new)]+=1 #new individual
     else:#If no mutation
-         n[t][resc_x(x)]+=1
+         n[resc_x(x)]+=1
 
 
 
@@ -41,10 +41,10 @@ def HT_kernel(Ntot,x):#Defining the kernel of HT transfer
     return list(map(lambda z: z/S, X_weighted))
 
 
-def HT(n,Ntot,t,x):#in a population n, with Ntot total individuals, at time t and individual with trait x is subject to a Horizontal transfer
+def HT(n,Ntot,x):#in a population n, with Ntot total individuals, at time t and individual with trait x is subject to a Horizontal transfer
     x_new=np.random.choice(X, size=None, replace=False, p=HT_kernel(Ntot,x))
-    n[t][resc_x(x_new)]+=1
-    n[t][resc_x(x)]-=1
+    n[resc_x(x_new)]+=1
+    n[resc_x(x)]-=1
 
 
 
@@ -92,21 +92,18 @@ def event_collection(n,Ntot):#for each individual in population n, we simulate t
     return collection.loc[collection['Time']<dT2] #return the list with only times that are < dT2.
 
 
-def next_time(n,t):
-    Ntot=sum(n[t])
-    n[t+1]=n[t].copy()
+def next_time(n):
+    Ntot=sum(n)
+    n_new=n.copy()
     events=event_collection(n,Ntot)
     for columns,row in events.iterrows():
         if row['Event']=='death':
-            death(n,t+1,row['Trait'])
+            death(n_new,row['Trait'])
         elif row['Event']=='birth':
-            birth(n,t+1,row['Trait'])
+            birth(n_new,row['Trait'])
         else:
-            HT(n,Ntot,t+1,row['Trait'])
+            HT(n_new,Ntot,row['Trait'])
 
-def simulation(n0):
-    for t in T:
-        next_time(N,t)
 
 
 
