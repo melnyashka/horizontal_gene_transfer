@@ -4,7 +4,7 @@ import numpy as np
 
 # Auxiliary part
 T_max= 10 #Maximal time
-dT=0.001 #Step of discretization for time
+dT=0.1 #Step of discretization for time
 nT=int(T_max/dT) #number of times
 T=[t*dT for t in range(nT)] #list of all times
 
