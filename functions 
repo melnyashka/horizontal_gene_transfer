@@ -16,9 +16,7 @@ def resc_x(x):#rescale a trait to a position in the vector X
 #Defining the events of death, birth, and HT
 
 def death(n,t,x):#at time t, this function kills an individual x in the population n
-    n=n
     n[t][resc_x(x)]-=1#modifies in place
-    #return n
 
 
 def mutation_kernel(x):#Define the mutation kernel centered at x
@@ -27,14 +25,12 @@ def mutation_kernel(x):#Define the mutation kernel centered at x
     return list(map(lambda z: z/S, X_weighted))
 
 def birth(n,t,x):#Process of birth of an individual x at time t in the population n
-    n=n
     mutation=np.random.binomial(1, p, size=None)==0#Boolean, true if mutation.
     if mutation:
         x_new=np.random.choice(X, size=None, replace=False, p=mutation_kernel(x))#choice of the new trait
         n[t][resc_x(x_new)]+=1 #new individual
     else:#If no mutation
          n[t][resc_x(x)]+=1
-    #return n
 
 
 
@@ -49,9 +45,6 @@ def HT(n,Ntot,t,x):#in a population n, with Ntot total individuals, at time t an
     x_new=np.random.choice(X, size=None, replace=False, p=HT_kernel(Ntot,x))
     n[t][resc_x(x_new)]+=1
     n[t][resc_x(x)]-=1
-    #return n
-
-
 
 
 
@@ -71,7 +64,6 @@ def HT(n,Ntot,t,x):#in a population n, with Ntot total individuals, at time t an
 
 
 def flambda(n,Ntot,t,x):#Return the (lambda_b,lambda_d,lambda_HT), parameters of the exponential laws. n is N the population, Ntot is the total size
-    
     HT_tot=0 #We compute the total transfer rate, i.e the sum over y of tau(x,y)/(beta+mu*Ntot)
     for y in range(nX):
         HT_tot+=horizontal_transfer(x, y, Ntot)
@@ -88,16 +80,32 @@ def event_individual(n,Ntot,t,x):#for a fixed individual (with trait x at time t
         Type_Event='death'
     elif T_HT==T_first:
         Type_Event='HT'
-    return (T_first,Type_Event)
+    return T_first,Type_Event
 
 dT2=dT #interval of time in which events are taken into account.
 def event_collection(n,Ntot,t):#for each individual in population n, we simulate the first event. Then we return the list of all the events for all individuals that happen bedore dT2.
     collection=pd.DataFrame(columns=['Time','Event','Trait'])
     for x in X:#for each trait
         for i in range(n[resc_x(x)]):#for each individual of trait x
-            (T_first,Type_Event)=event_individual(n,Ntot,t,x)#we recover the first event of this individual
+            T_first,Type_Event=event_individual(n,Ntot,t,x)#we recover the first event of this individual
             collection.append(pd.DataFrame([[T_first], [Type_Event],[x]], columns=['Time','Event','Trait']))#We add the new row with the new event
     return collection.loc[collection['Time']<dT2] #return the list with only times that are < dT2.
+
+
+def next_time(n,t):
+    Ntot=sum(n[t])
+    events=event_collection(n,Ntot,t)
+    for columns,row in events.iterrows():
+        if row['Event']=='death':
+            death(n,t,row['Trait'])
+        elif row['Event']=='birth':
+            birth(n,t,row['Trait'])
+        else:
+            HT(n,Ntot,t,row['Trait'])
+
+def simulation(n0):
+    for t in T:
+        next_time(N,t)
 
 
 
