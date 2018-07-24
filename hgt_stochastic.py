@@ -4,9 +4,11 @@ import numpy as np
 
 # Auxiliary part
 T_max= 10 #Maximal time
-dT=0.1 #Step of discretization for time
+dT=0.001 #Step of discretization for time
 nT=int(T_max/dT) #number of times
 T=[t*dT for t in range(nT)] #list of all times
+
+dT2=dT #interval of time for which events are taken into account
 
 X_min = 0   # Minimal trait
 X_max = 4   # Maximum amount of traits
@@ -22,20 +24,29 @@ mu = 1      #
 
 sigma = 0.1     # variance of the mutation kernel
 
-N_0 = 1000 # Initial size of the population
-def init_population(N_0):
-    N_p = [None]*nX
-    for i in range(0,nX):
-        if i == 0:
-            N_p[i] = np.random.randint(0, N_0)
-        else:
-            N_p[i] = np.random.randint(0, N_0-sum(N_p[0:i]))
-    return N_p
 
-N = [[0] * nX for _ in range(nT)] # Initialization of the population. Matrix T*X
+#INITIAL TIME
+N0=[0 for x in X]
+Ntot0=1000#initial size of population
 
-def mut_kern(x):
-    return np.random.normal(0, sigma^2)
+m=1#Initial law of repartition. Gaussian centered at m with variance sigma0^2
+sigma0=0.1
+X_weighted= list(map(lambda z: np.exp(-((m-z)/sigma0)**2), X))
+S=sum(X_weighted)
+Initial_repartition=list(map(lambda z: z/S, X_weighted))#law of repartition
+    
+x=np.random.choice(X, size=Ntot0, replace=True, p=Initial_repartition)#choice of Ntot random variable with respect to the law
+for y in x:
+    N0[resc_x(y)]+=1#creation of the vector of the initial population
+
+
+
+
+
+
+#################################################
+
+#FUNCTION/PARAMETERS
 
 def b(x):   # Birth rate function
     return 4-x
@@ -59,5 +70,31 @@ def tau(x,y):   # function tau
 def horizontal_transfer(x, y, Ntot):    # HT rate, i.e tau/(beta+mu*Ntot)
     return tau(x,y)/(beta+mu*Ntot)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TESTS
+N[0]=N0
 
 

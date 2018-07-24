@@ -68,11 +68,11 @@ def flambda(n,Ntot,t,x):#Return the (lambda_b,lambda_d,lambda_HT), parameters of
     for y in range(nX):
         HT_tot+=horizontal_transfer(x, y, Ntot)
         
-    lambda_x_tot=b(x)+death_prob(x, Ntot)+HT_tot(x, Ntot)#Total lambda
-    return b(x)/lambda_x_tot,death_prob(x, Ntot)/lambda_x_tot,HT_tot(x, Ntot)/lambda_x_tot#(lambda_b, lambda_d, lambda_HT)
+    lambda_x_tot=b(x)+death_prob(x, Ntot)+HT_tot#Total lambda
+    return b(x)/lambda_x_tot,death_prob(x, Ntot)/lambda_x_tot,HT_tot/lambda_x_tot#(lambda_b, lambda_d, lambda_HT)
 
 def event_individual(n,Ntot,t,x):#for a fixed individual (with trait x at time t in the population n) pick three times (T_b, T_d, T_HT) with the exponential law (lambda_b, lambda_d, lambda_HT) corresponding to the events of death, birth and HT. We only keep the first event (i.e the minimal time), and we return the time and type fof the first event.
-    lambda_b, lambda_d, lambda_HT=flambda(n,t,x)#we recover the parameters of the exponential laws
+    lambda_b, lambda_d, lambda_HT=flambda(n,Ntot,t,x)#we recover the parameters of the exponential laws
     T_b, T_d, T_HT=np.random.exponential(scale=lambda_b, size=None), np.random.exponential(scale=lambda_d, size=None),np.random.exponential(scale=lambda_HT, size=None)#Compute the three random times
     T_first= min (T_b,T_d,T_HT)#taking the first event
     Type_Event='birth'#determining what kind of event the first event is.
@@ -86,9 +86,9 @@ dT2=dT #interval of time in which events are taken into account.
 def event_collection(n,Ntot,t):#for each individual in population n, we simulate the first event. Then we return the list of all the events for all individuals that happen bedore dT2.
     collection=pd.DataFrame(columns=['Time','Event','Trait'])
     for x in X:#for each trait
-        for i in range(n[resc_x(x)]):#for each individual of trait x
+        for i in range(n[t][resc_x(x)]):#for each individual of trait x
             T_first,Type_Event=event_individual(n,Ntot,t,x)#we recover the first event of this individual
-            collection.append(pd.DataFrame([[T_first], [Type_Event],[x]], columns=['Time','Event','Trait']))#We add the new row with the new event
+            collection.append(pd.DataFrame([[T_first, Type_Event,x]], columns=['Time','Event','Trait']))#We add the new row with the new event
     return collection.loc[collection['Time']<dT2] #return the list with only times that are < dT2.
 
 
