@@ -1,17 +1,79 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 23 16:20:08 2018
+# Import packages here
 
-@author: samuelnordmann
-"""
 import numpy as np
 import scipy
 from scipy import stats
 import pandas as pd
 
+# Auxiliary part
+T_max= 4 #Maximal time
+dT=0.1 #Step of discretization for time
+nT=int(T_max/dT) #number of times
+T=[t*dT for t in range(nT)] #list of all times
+
+dT2=10*dT #interval of time for which events are taken into account
+
+X_min = 0   # Minimal trait
+X_max = 4   # Maximum amount of traits
+dX = 0.1      # Step of discretization for time
+nX = int((X_max-X_min)/dX) # number of traits
+X = [x*dX for x in range(nX)] # list of possible traits
+
+K = 1000    # Maximal capacity of the system
+C = 0.001     # Competition
+p = 1    # Probability of mutation
+beta = 0    # 
+mu = 1      # 
+
+sigma = 0.5     # variance of the mutation kernel
+
+tau_C=0.1 #constant in tau
+
+#INITIAL TIME
+N0=[0 for x in X]
+Ntot0=100  #initial size of population
+N = np.zeros([nT,nX], dtype = int) # history of population sizes
+
+m=1#Initial law of repartition. Gaussian centered at m with variance sigma0^2
+sigma0=0.1
+X_weighted= list(map(lambda z: np.exp(-((m-z)/sigma0)**2), X))
+S=sum(X_weighted)
+Initial_repartition=list(map(lambda z: z/S, X_weighted))    #law of repartition
+
 def resc_x(x):#rescale a trait to a position in the vector X
     return int(x/dX)
+    
+x=np.random.choice(X, size=Ntot0, replace=True, p=Initial_repartition)#choice of Ntot random variable with respect to the law
+for y in x:
+    N0[resc_x(y)]+=1#creation of the vector of the initial population
+
+N[0,] = N0
+
+#################################################
+
+#FUNCTION/PARAMETERS
+
+def b(x):   # Birth rate function
+    return 10-x
+
+def d(x):   # Death rate function
+    return 1
+
+def death_prob(x, Ntot):
+    # Ntot = total size of the population
+    # C = Constant competition rate
+    return d(x) + Ntot*C
+
+# Compute the probability of birth, death and horizontal transfer events
+
+def tau(x,y):   # function tau
+    if (x<y): 
+        return tau_C
+    else:
+        return 0
+    
+def horizontal_transfer(x, y, Ntot):    # HT rate, i.e tau/(beta+mu*Ntot)
+    return tau(x,y)/(beta+mu*Ntot)
 
 #Defining the events of death, birth, and HT
 
@@ -25,7 +87,7 @@ def mutation_kernel(x):#Define the mutation kernel centered at x
     return list(map(lambda z: z/S, X_weighted))
 
 def birth(n,x):#Process of birth of an individual x at time t in the population n
-    mutation=np.random.binomial(1, p, size=None)==0#Boolean, true if mutation.
+    mutation=np.random.binomial(1, p, size=None)==1#Boolean, true if mutation.
     if mutation:
         x_new=np.random.choice(X, size=None, replace=False, p=mutation_kernel(x))#choice of the new trait
         n[resc_x(x_new)]+=1 #new individual
@@ -45,19 +107,6 @@ def HT(n,Ntot,x):#in a population n, with Ntot total individuals, at time t and 
     x_new=np.random.choice(X, size=None, replace=False, p=HT_kernel(Ntot,x))
     n[resc_x(x_new)]+=1
     n[resc_x(x)]-=1
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -108,11 +157,6 @@ def next_time(n):
 
 
 
-    #collection_Event=[]#initialization, empty list
-    #collection_Time=[]#initialization, empty list
-            #collection_Time.append(T_first)#We keep track of the time when it happens
-            #collection_Event.append([x,Type_Event])#We keep track of the type of event. More previsely, [trait, Type of Event]
-    #return[x for _,x in sorted(zip(collection_Time,collection_Event))]#We sort the list 
 
 
 
@@ -120,5 +164,5 @@ def next_time(n):
 
 
 
-#def evolution(n,Ntot,t)#take the 10 first elements of event_collection
+
 

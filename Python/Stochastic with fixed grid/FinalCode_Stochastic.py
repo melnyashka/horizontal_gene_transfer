@@ -20,12 +20,12 @@ nX = int((X_max-X_min)/dX) # number of traits
 X = [x*dX for x in range(nX)] # list of possible traits
 
 K = 1000    # Maximal capacity of the system
-C = 0.5     # Competition
+C = 0.05     # Competition
 p = 0.03    # Probability of mutation
 beta = 0    # 
 mu = 1      # 
 
-sigma = 0.1     # variance of the mutation kernel
+sigma = 0.01     # variance of the mutation kernel
 
 
 #INITIAL TIME
@@ -53,7 +53,7 @@ N[0,] = N0
 #FUNCTION/PARAMETERS
 
 def b(x):   # Birth rate function
-    return 4-x
+    return 10-x
 
 def d(x):   # Death rate function
     return 1
