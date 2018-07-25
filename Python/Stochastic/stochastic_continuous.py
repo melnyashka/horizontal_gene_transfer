@@ -13,6 +13,7 @@ d_r = 1      # death rate
 beta = 0 
 mu = 1
 tau = 0.6    # transfer rate
+sigma = 0.1
 
 X0 = np.random.normal(1, 0.1, N0) # Initial population
 
@@ -33,11 +34,9 @@ def Next_Generation(x):
     lambda_death = d_r*x^2 + n_tot*C
     lambda_transfer = horizontal_transfer(x)
     lambda_total =  lambda_birth + lambda_death + lambda_transfer
-    prob = np.array([lambda_birth/lambda_total, lambda_death/lambda_total, lambda_transfer/lambda_total])
     times = np.array([np.random.exponential(lambda_total/lambda_birth),np.random.exponential(lambda_total/lambda_death), np.random.exponential(lambda_total/lambda_transfer)])
     b_mat = (times < dT)
 
-    np.sort(np.concatenate((X[np.logical_not(np.logical_or(Bd,Bht))],np.random.normal(loc=X[Bb], scale=sigma, size=None),np.vectorize(lambda i: np.random.choice(X[(i+1):]))(np.arange(X.size)[Bht][:-1]))))
-    return 0
+    return np.sort(np.concatenate((x[np.logical_not(np.logical_or(b_mat[1],b_mat[2]))],np.random.normal(loc=x[b_mat[0]], scale=sigma, size=None),np.vectorize(lambda i: np.random.choice(x[(i+1):]))(np.arange(n_tot)[b_mat[2]][:-1]))))
 
 
