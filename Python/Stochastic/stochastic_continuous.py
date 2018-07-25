@@ -8,7 +8,7 @@ K = 1000     # Maximal capacity of the system
 N0 = 1000    # Initial number of population
 C = 0.5/K    # competition
 p = 0.3      # Probability of mutation
-b_r = 4      # birth rate
+b_r = 1     # birth rate
 d_r = 1      # death rate
 beta = 0 
 mu = 1
@@ -29,8 +29,8 @@ def horizontal_transfer(x):
 
 def Next_Generation(x):
     n_tot = len(x)
-    lambda_birth = b_r-x
-    lambda_death = d_r + n_tot*C
+    lambda_birth = b_r
+    lambda_death = d_r*x^2 + n_tot*C
     lambda_transfer = horizontal_transfer(x)
     lambda_total =  lambda_birth + lambda_death + lambda_transfer
     prob = np.array([lambda_birth/lambda_total, lambda_death/lambda_total, lambda_transfer/lambda_total])
