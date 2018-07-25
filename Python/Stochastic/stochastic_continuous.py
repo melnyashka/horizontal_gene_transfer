@@ -17,7 +17,7 @@ tau = 0.6    # transfer rate
 X0 = np.random.normal(1, 0.1, N0) # Initial population
 
 X = [None]*int(T_max/dT)  # history of all populations up to time T_max
-X[1] = X0.sort()
+X[0] = np.sort(X0)
 
 def horizontal_transfer(x):
     # Do transfer in an already sorted list!!!
@@ -34,8 +34,10 @@ def Next_Generation(x):
     lambda_transfer = horizontal_transfer(x)
     lambda_total =  lambda_birth + lambda_death + lambda_transfer
     prob = np.array([lambda_birth/lambda_total, lambda_death/lambda_total, lambda_transfer/lambda_total])
-    times = np.array([np.random.exponential(1/prob[0]),np.random.exponential(1/prob[1]), np.random.exponential(1/prob[2])])
+    times = np.array([np.random.exponential(lambda_total/lambda_birth),np.random.exponential(lambda_total/lambda_death), np.random.exponential(lambda_total/lambda_transfer)])
     b_mat = (times < dT)
+
+    np.sort(np.concatenate((X[np.logical_not(np.logical_or(Bd,Bht))],np.random.normal(loc=X[Bb], scale=sigma, size=None),np.vectorize(lambda i: np.random.choice(X[(i+1):]))(np.arange(X.size)[Bht][:-1]))))
     return 0
 
 
