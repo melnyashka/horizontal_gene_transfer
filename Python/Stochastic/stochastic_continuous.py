@@ -26,17 +26,22 @@ def horizontal_transfer(x):
     n_tot = len(x)
     ht_rate = tau/(beta+mu*n_tot)
     return list(map(lambda i: ht_rate*(n_tot-i), range(n_tot)))
+    
 
 
 def Next_Generation(x):
-    n_tot = len(x)
-    lambda_birth = b_r
-    lambda_death = d_r*x^2 + n_tot*C
-    lambda_transfer = horizontal_transfer(x)
-    lambda_total =  lambda_birth + lambda_death + lambda_transfer
-    times = np.array([np.random.exponential(lambda_total/lambda_birth),np.random.exponential(lambda_total/lambda_death), np.random.exponential(lambda_total/lambda_transfer)])
-    b_mat = (times < dT)
+    if x.size==0:
+        return x
+    else:
+        n_tot = len(x)
+        print(n_tot)
+        lambda_birth = b_r
+        lambda_death = d_r*x**2 + n_tot*C
+        lambda_transfer = horizontal_transfer(x)
+        lambda_total =  lambda_birth + lambda_death + lambda_transfer
+        times = np.array([np.random.exponential(lambda_total/lambda_birth),np.random.exponential(lambda_total/lambda_death), np.random.exponential(lambda_total/lambda_transfer)])
+        b_mat = (times < dT)
 
-    return np.sort(np.concatenate((x[np.logical_not(np.logical_or(b_mat[1],b_mat[2]))],np.random.normal(loc=x[b_mat[0]], scale=sigma, size=None),np.vectorize(lambda i: np.random.choice(x[(i+1):]))(np.arange(n_tot)[b_mat[2]][:-1]))))
+        return np.sort(np.concatenate((x[np.logical_not(np.logical_or(b_mat[1],b_mat[2]))],np.random.normal(loc=x[b_mat[0]], scale=sigma, size=None),np.vectorize(lambda i: np.random.choice(x[(i+1):]),otypes=[np.float64])(np.arange(n_tot)[b_mat[2]][:-1]))))
 
 
