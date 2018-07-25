@@ -10,5 +10,10 @@ import matplotlib.pyplot as plt
 for i in range(int(T_max/dT-1)):
     X[i+1]=Next_Generation(X[i])
     
+P=[]
+for i in range(int(T_max/dT)):
+    for e in range(len(X[i])):
+        P.extend([(i,X[i][e])])
+
 #X2=np.asarray(X)
 #imgplot = plt.imshow(X2)
