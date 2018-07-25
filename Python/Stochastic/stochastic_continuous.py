@@ -17,6 +17,8 @@ sigma = 0.1
 
 X0 = np.random.normal(1, 0.1, N0) # Initial population
 
+
+
 X = [None]*int(T_max/dT)  # history of all populations up to time T_max
 X[0] = np.sort(X0)
 
