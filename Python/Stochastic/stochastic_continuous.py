@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-T_max = 10 # maximal time 
+T_max = 100 # maximal time 
 dT = 0.1 # Discretization time 
 
 K = 1000     # Maximal capacity of the system
@@ -12,8 +12,8 @@ b_r = 1     # birth rate
 d_r = 1      # death rate
 beta = 0 
 mu = 1
-tau = 0.6    # transfer rate
-sigma = 0.1
+tau = 0.001    # transfer rate
+sigma = 0.01
 
 X0 = np.random.normal(1, 0.1, N0) # Initial population
 
@@ -32,15 +32,14 @@ def horizontal_transfer(x):
 
 
 def Next_Generation(x):
-    if x.size==0:
+    n_tot = x.size
+    if n_tot==0:
         return x
     else:
-        n_tot = len(x)
-        vec = np.ones([n_tot])
-        lambda_birth = b_r
-        lambda_death = d_r*x**2 + n_tot*C
-        lambda_transfer = horizontal_transfer(x)
-        times = np.array([np.random.exponential(lambda_birth*vec),np.random.exponential(lambda_death*vec), np.random.exponential(lambda_transfer*vec)])
+        beta_birth = np.divide(1,np.repeat(b_r, n_tot))
+        beta_death = np.divide(1,d_r*x**2 + n_tot*C)
+        beta_transfer = np.divide(1,horizontal_transfer(x))
+        times = np.array([np.random.exponential(beta_birth),np.random.exponential(beta_death), np.random.exponential(beta_transfer)])
         b_mat = (times < dT)
 
         return np.sort(np.concatenate((x[np.logical_not(np.logical_or(b_mat[1],b_mat[2]))],np.random.normal(loc=x[b_mat[0]], scale=sigma, size=None),np.vectorize(lambda i: np.random.choice(x[(i+1):]),otypes=[np.float64])(np.arange(n_tot)[b_mat[2]][:-1]))))
