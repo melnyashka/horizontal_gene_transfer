@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-T_max = 100 # maximal time 
+T_max = 10000 # maximal time 
 dT = 0.1 # Discretization time 
 
-K = 1000     # Maximal capacity of the system
-N0 = 1000    # Initial number of population
+K = 250     # Maximal capacity of the system
+N0 = 250    # Initial number of population
 sigma0=0.1  #Initial standard variation of the population
 C = 0.5    # competition
 p = 0.3      # Probability of mutation
@@ -14,7 +14,7 @@ d_r = 1      # death rate
 beta = 0 
 mu = 1
 sigma = 0.01
-tau = 0.001    # transfer rate
+tau = 0.15    # transfer rate
 
 
 
