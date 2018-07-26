@@ -32,7 +32,7 @@ plt.title(titre)
 
 
 plt.show()
-
+figure.savefig(str("plot "+str(current_time)[0:8]+" .pdf"),bbox_inches='tight')
 
 
 

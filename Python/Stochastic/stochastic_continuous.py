@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-T_max = 1000 # maximal time 
+T_max = 10000 # maximal time 
 dT = 0.1 # Discretization time 
 
 K = 250     # Maximal capacity of the system
@@ -14,7 +14,7 @@ d_r = 1      # death rate
 beta = 0 
 mu = 1
 sigma = 0.01
-tau = 0.001    # transfer rate
+tau = 0.15    # transfer rate
 
 
 
