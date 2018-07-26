@@ -7,18 +7,15 @@ Created on Wed Jul 25 16:10:45 2018
 """
 import matplotlib.pyplot as plt
 
-for i in range(int(T_max/dT-1)):
-    X[i+1]=Next_Generation(X[i])
-
 Abs=[]   
 Ord=[]
-for i in range(int(T_max/dT)):
-    for e in range(len(X[i])):
-        Abs.extend([i])
-        Ord.extend([X[i][e]])
 
-#X2=np.asarray(X)
-#imgplot = plt.imshow(X2)
+for i in range(int(T_max/dT-1)):
+    X[i+1]=Next_Generation(X[i])
+    for x in X[i]:
+        Abs.extend([i])
+        Ord.extend([x)
+
 
 plt.plot(Abs,Ord)
 plt.show()
