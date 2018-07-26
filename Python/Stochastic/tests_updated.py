@@ -23,13 +23,20 @@ X0 = np.random.normal(parameters['x_mean0'], parameters['sigma0'], parameters['N
 #X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
 X = np.sort(X0)
 
-Abs=[]   
+Abs=[]#Save all the individuals   
 Ord=[]
-
+Abs_mean=[]#Save the mean trait
+Ord_mean=[]
+Abs_tot=[]#Save the total size of the population
+Ord_tot=[]
 for i in range(int(parameters['T_max']/parameters['dT']-1)):
     for x in X:
-        Abs.extend([i*parameters['dT']])
-        Ord.extend([x])
+        Abs.append(i*parameters['dT'])
+        Ord.append(x)
+    Abs_mean.append(i)
+    Ord_mean.append(np.mean(X))
+    Abs_tot.append(i)
+    Ord_tot.append(X.size)
     X=Next_Generation(X, parameters)
     
 build_and_save(Abs, Ord, parameters) # build and save a plot in folder Figures in home directory (you must create it first!)
