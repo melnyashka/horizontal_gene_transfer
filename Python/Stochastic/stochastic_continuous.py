@@ -34,7 +34,8 @@ def build_and_save(Abs, Ord, parameters): # function for creating and saving plo
             smth = ", "
         par_str += k + "=" + str(v) + smth
     figure = plt.figure()
-    plt.hist2d(Abs, Ord, bins=parameters['K']/2, cmap=plt.cm.jet)
+    plt.hist2d(Abs,Ord,bins=3/2*parameters['K'],cmap=plt.cm.bone_r,alpha=1,cmax=1000,cmin=20)
+    #plt.hist2d(Abs, Ord, bins=parameters['K']/2, cmap=plt.cm.jet)
     plt.colorbar()
     plt.xlabel('time')
     plt.ylabel('trait');
