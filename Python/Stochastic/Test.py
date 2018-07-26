@@ -17,16 +17,13 @@ for i in range(int(T_max/dT-1)):
         Ord.extend([x])
 
 
+
+
 plt.scatter(Abs,Ord,s=0.5)
 plt.xlabel('time')
 plt.ylabel('trait');
 
-
-titre='T_max = '+str(T_max)
-+'\ndT = '+str(dT) 
-+'\nK = '+str(K)
-+'\nN0 = '+str(N0)
-
+titre='T_max = '+str(T_max)+' ; K = '+str(K)+' ; N0 = '+str(N0)+' ; sigma0 = '+str(sigma0)+'\nC = '+str(C)+' ; p = '+str(p)+' ; b_r = '+str(b_r)+'\nd_r = '+str(d_r)+' ; beta = '+str(beta)+' ; mu = '+str(mu)+' ; sigma = '+str(sigma) +' ; tau = '+str(tau)          
 plt.title(titre)
 
 plt.show()

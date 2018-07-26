@@ -6,16 +6,19 @@ dT = 0.1 # Discretization time
 
 K = 1000     # Maximal capacity of the system
 N0 = 1000    # Initial number of population
-C = 0.5/K    # competition
+sigma0=0.1  #Initial standard variation of the population
+C = 0.5    # competition
 p = 0.3      # Probability of mutation
 b_r = 1     # birth rate
 d_r = 1      # death rate
 beta = 0 
 mu = 1
-tau = 0.001    # transfer rate
 sigma = 0.01
+tau = 0.001    # transfer rate
 
-X0 = np.random.normal(1, 0.1, N0) # Initial population
+
+
+X0 = np.random.normal(1, sigma0, N0) # Initial population
 
 
 
@@ -37,7 +40,7 @@ def Next_Generation(x):
         return x
     else:
         beta_birth = np.divide(1,np.repeat(b_r, n_tot))
-        beta_death = np.divide(1,d_r*x**2 + n_tot*C)
+        beta_death = np.divide(1,d_r*x**2 + n_tot*C/K)
         beta_transfer = np.divide(1,horizontal_transfer(x))
         times = np.array([np.random.exponential(beta_birth),np.random.exponential(beta_death), np.random.exponential(beta_transfer)])
         b_mat = (times < dT)
