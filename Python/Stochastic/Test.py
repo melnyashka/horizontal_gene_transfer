@@ -6,6 +6,12 @@ Created on Wed Jul 25 16:10:45 2018
 @author: samuelnordmann
 """
 import matplotlib.pyplot as plt
+import datetime
+from datetime import datetime
+
+current_time=datetime.now().time()
+
+figure=plt.figure()
 
 Abs=[]   
 Ord=[]
@@ -20,7 +26,7 @@ for i in range(int(T_max/dT-1)):
 
 
 #plt.scatter(Abs,Ord,s=0.01,alpha=0.2)
-plt.hist2d(Abs,Ord,bins=2*K,cmap=plt.cm.Blues)
+plt.hist2d(Abs,Ord,bins=3/2*K,cmap=plt.cm.bone_r,alpha=1,cmax=1000,cmin=20)
 plt.colorbar()
 
 plt.xlabel('time')
@@ -32,7 +38,7 @@ plt.title(titre)
 
 
 plt.show()
-figure.savefig(str("plot "+str(current_time)[0:8]+" .pdf"),bbox_inches='tight')
+figure.savefig(str("plot_Sam "+str(current_time)[0:8]+" .pdf"),bbox_inches='tight')
 
 
 
