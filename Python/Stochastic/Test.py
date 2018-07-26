@@ -25,7 +25,7 @@ plt.ylabel('trait');
 titre='T_max = '+str(T_max)
 +'\ndT = '+str(dT) 
 +'\nK = '+str(K)
-+'\nN0 = '+str(N0)'
++'\nN0 = '+str(N0)
 
 plt.title(titre)
 
