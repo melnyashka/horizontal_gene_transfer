@@ -1,7 +1,7 @@
 # Horizontal gene transfer
 Cemracs 2018 project. 
 
-**Participants:** [Susely Iglesias](https://www.math.univ-toulouse.fr/~sfiguero/) (Université Paul Sabatier, Toulouse), [Anna Melnykova](http://amelnykova.com) (Université de Cergy-Pontoise and Université de Grenoble Alpes), [Samuel Nordmann](https://sites.google.com/view/samuelnordmann/) (CAMS, EHESS, PSL Université, Paris)
+**Participants:** [Susely Figueroa Iglesias](https://www.math.univ-toulouse.fr/~sfiguero/) (Université Paul Sabatier, Toulouse), [Anna Melnykova](http://amelnykova.com) (Université de Cergy-Pontoise and Université de Grenoble Alpes), [Samuel Nordmann](https://sites.google.com/view/samuelnordmann/) (CAMS, EHESS, PSL Université, Paris)
 
 **Supervisors:** Sylvie Méléard, Vincent Calvez
 
