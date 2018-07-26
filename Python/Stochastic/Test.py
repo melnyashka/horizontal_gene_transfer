@@ -14,7 +14,7 @@ for i in range(int(T_max/dT-1)):
     X[i+1]=Next_Generation(X[i])
     for x in X[i]:
         Abs.extend([i])
-        Ord.extend([x)
+        Ord.extend([x])
 
 
 plt.plot(Abs,Ord)
