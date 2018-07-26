@@ -20,7 +20,7 @@ for i in range(int(T_max/dT-1)):
 
 
 #plt.scatter(Abs,Ord,s=0.01,alpha=0.2)
-plt.hist2d(Abs,Ord,bins=K,cmap=plt.cm.Blues)
+plt.hist2d(Abs,Ord,bins=2*K,cmap=plt.cm.Blues)
 plt.colorbar()
 
 plt.xlabel('time')
