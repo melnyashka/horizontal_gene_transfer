@@ -17,5 +17,10 @@ for i in range(int(T_max/dT-1)):
         Ord.extend([x])
 
 
-plt.plot(Abs,Ord)
+plt.scatter(Abs,Ord)
 plt.show()
+
+
+
+
+
