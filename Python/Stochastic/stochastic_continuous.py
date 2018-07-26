@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import gc
 from datetime import datetime
 
 def horizontal_transfer(x, tau, beta, mu):

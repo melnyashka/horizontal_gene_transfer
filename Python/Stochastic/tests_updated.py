@@ -31,5 +31,6 @@ for i in range(int(parameters['T_max']/parameters['dT']-1)):
         Abs.extend([i*parameters['dT']])
         Ord.extend([x])
     X=Next_Generation(X, parameters)
-
+    
 build_and_save(Abs, Ord, parameters) # build and save a plot in folder Figures in home directory (you must create it first!)
+gc.collect()
