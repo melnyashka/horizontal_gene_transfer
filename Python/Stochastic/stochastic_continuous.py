@@ -11,13 +11,13 @@ def horizontal_transfer(x, tau, beta, mu):
     return list(map(lambda i: ht_rate*(n_tot-i), range(n_tot)))
     
 def Next_Generation(x, parameters):
-    b_r, d_r, C, K, sigma = parameters['b_r'], parameters['d_r'], parameters['C'], parameters['K'], parameters['sigma']
+    b_r, d_r, C, K, sigma, d_e = parameters['b_r'], parameters['d_r'], parameters['C'], parameters['K'], parameters['sigma'],parameters['d_e']
     n_tot = x.size
     if n_tot==0:
         return x
     else:
         beta_birth = np.divide(1,np.repeat(b_r, n_tot))
-        beta_death = np.divide(1,d_r*x**2 + n_tot*C/K)
+        beta_death = np.divide(1,d_r*np.power(np.absolute(x),d_e) + n_tot*C/K)
         beta_transfer = np.divide(1,horizontal_transfer(x, tau = parameters['tau'], beta = parameters['beta'], mu = parameters['mu']))
         times = np.array([np.random.exponential(beta_birth),np.random.exponential(beta_death), np.random.exponential(beta_transfer)])
         b_mat = (times < parameters['dT'])
