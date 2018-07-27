@@ -6,6 +6,7 @@ Created on Thu Jul 26 16:14:55 2018
 @author: samuelnordmann
 """
 import gc
+from datetime import datetime
 
 
 # import stochastic_continuous # Check if it works on your machine! 
@@ -38,12 +39,12 @@ Abs=[]
 Ord=[]
 
 
-tau_M=5
+tau_M=3
 tau_m=0.001
-tau_step=0.1
+tau_step=0.01
 
-param='b_r'
-param_M=10
+param='d_r'
+param_M=100
 param_m=1
 param_step=1
 
@@ -66,6 +67,27 @@ for param_value in np.arange(param_m,param_M,param_step):
         break
 
 
+
+par_str = '' # create a string of parameters to pass into plots
+for k, v in parameters.items():
+    if k == 'N0' or k == 'b_r': 
+        smth = ",\n" 
+    else: 
+        smth = ", "
+    par_str += k + "=" + str(v) + smth
+
+
+
+
+
+figure = plt.figure()
+plt.plot(Abs,Ord)
+plt.xlabel(param)
+plt.ylabel('Tau_critical')
+plt.title(par_str)
+plt.show()
+current_time = datetime.now().time()
+figure.savefig(str("Figures/CriticalTau_param="+param+"__"+ str(current_time)[0:8]+".pdf"), bbox_inches='tight')
 
 
 
