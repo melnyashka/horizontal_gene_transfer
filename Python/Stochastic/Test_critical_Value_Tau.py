@@ -39,14 +39,14 @@ Abs=[]
 Ord=[]
 
 
-tau_M=3
+tau_M=0.4
 tau_m=0.001
-tau_step=0.01
+tau_step=0.02
 
 param='d_r'
-param_M=100
-param_m=1
-param_step=1
+param_M=1
+param_m=0.1
+param_step=0.1
 
 for param_value in np.arange(param_m,param_M,param_step):
     parameters[param]=param_value
