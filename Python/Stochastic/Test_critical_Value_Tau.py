@@ -97,8 +97,6 @@ for k, v in parameters.items():
 
 
 
-
-
 figure = plt.figure()
 plt.plot(Abs,Ord)
 plt.xlabel(param)
@@ -107,9 +105,6 @@ plt.title(par_str)
 plt.show()
 current_time = datetime.now().time()
 figure.savefig(str("Figures/CriticalTau_param="+param+"__"+ str(current_time)[0:8]+".pdf"), bbox_inches='tight')
-
-
-
 
 
 

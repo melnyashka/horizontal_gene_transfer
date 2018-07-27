@@ -9,6 +9,7 @@ parameters = dict(T_max = 1000, # maximal time
 #                p = 0.03,      # Probability of mutation
                 b_r = 1,     # birth rate
                 d_r = 1,      # death rate
+                d_e=2,      #exponent for the death function
                 beta = 0, 
                 mu = 1,
                 sigma = 0.01,
