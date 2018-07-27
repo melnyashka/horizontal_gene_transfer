@@ -26,11 +26,27 @@ X = np.sort(X0)
 
 Abs=[]#Save all the individuals
 Ord=[]
+Abs_mean=[]#Save the mean trait
+Ord_mean=[]
+Abs_tot=[]#Save the total size of the population
+Ord_tot=[]
 for i in range(int(parameters['T_max']/parameters['dT']-1)):
+    if i%5000==0:
+        print('T= '+str(i*parameters['dT']))
     for x in X:
         Abs.append(i*parameters['dT'])
         Ord.append(x)
+    Abs_mean.append(i*parameters['dT'])
+    Ord_mean.append(np.mean(X))
+    Abs_tot.append(i*parameters['dT'])
+    Ord_tot.append(X.size)
     X=Next_Generation(X, parameters)
     
+Abs=np.array(Abs)
+Ord=np.array(Ord)
+Abs_mean=np.array(Abs_mean)
+Ord_mean=np.array(Ord_mean)
+Abs_tot=np.array(Abs_tot)
+Ord_tot=np.array(Ord_tot)
 #build_and_save(Abs, Ord, parameters) # build and save a plot in folder Figures in home directory (you must create it first!)
 gc.collect()
