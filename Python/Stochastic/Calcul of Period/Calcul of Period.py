@@ -5,7 +5,7 @@
 
 ##WHOLE GRAPH
 t_plot=2000
-T_plot=2500
+T_plot=4000
 
 t_calculus=1000
 T_calculus=parameters['T_max']
