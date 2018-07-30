@@ -1,5 +1,5 @@
 # import stochastic_continuous # Check if it works on your machine! 
-parameters = dict(T_max = 5000, # maximal time 
+parameters = dict(T_max = 1000, # maximal time 
                 dT = 0.1, # Discretization time 
                 K = 1000, # Maximal capacity of the system
                 N0 = 1000,    # Initial number of population
@@ -13,7 +13,7 @@ parameters = dict(T_max = 5000, # maximal time
                 beta = 0, 
                 mu = 1,
                 sigma = 0.01,
-                tau = 0.22 # transfer rate
+                tau = 0.28 # transfer rate
                 )
 
 # Change some parameters if needed!
@@ -23,30 +23,70 @@ parameters = dict(T_max = 5000, # maximal time
 X0 = np.random.normal(parameters['x_mean0'], parameters['sigma0'], parameters['N0']) # Initial population
 #X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
 X = np.sort(X0)
-
+l= np.empty(X0.size, dtype=np.object)
+for i in range(X0.size):
+    l[i]=[]
+    
 Abs=[]#Save all the individuals
 Ord=[]
-Abs_mean=[]#Save the mean trait
-Ord_mean=[]
-Abs_tot=[]#Save the total size of the population
-Ord_tot=[]
+
 for i in range(int(parameters['T_max']/parameters['dT']-1)):
     if i%5000==0:
         print('T= '+str(i*parameters['dT']))
     for x in X:
         Abs.append(i*parameters['dT'])
         Ord.append(x)
-    Abs_mean.append(i*parameters['dT'])
-    Ord_mean.append(np.mean(X))
-    Abs_tot.append(i*parameters['dT'])
-    Ord_tot.append(X.size)
-    X=Next_Generation(X, parameters)
+    X,l=Next_Generation_lineage(X,l,i*parameters['dT'], parameters)
     
-Abs=np.array(Abs)
-Ord=np.array(Ord)
-Abs_mean=np.array(Abs_mean)
-Ord_mean=np.array(Ord_mean)
-Abs_tot=np.array(Abs_tot)
-Ord_tot=np.array(Ord_tot)
-#build_and_save(Abs, Ord, parameters) # build and save a plot in folder Figures in home directory (you must create it first!)
-gc.collect()
+    
+    
+    
+    
+    
+    
+    
+    
+#Plot
+figure = plt.figure()
+
+plt.hist2d(Abs,Ord,bins=3/2*parameters['K'],cmap=plt.cm.bone_r,alpha=1,cmax=2*parameters['K'],cmin=parameters['K']/100)
+
+
+
+n_plot=15
+l_plot=np.random.choice(l,n_plot,replace=False)
+
+
+
+for e in l_plot:
+    Abs_plot=[]
+    Ord_plot=[]
+    for j in e:
+        Abs_plot.append(j[0])
+        Ord_plot.append(j[1])
+    plt.plot(Abs_plot,Ord_plot)
+
+
+
+
+    
+    
+
+par_str = '' # create a string of parameters to pass into plots
+for k, v in parameters.items():
+    if k == 'N0' or k == 'b_r': 
+        smth = ",\n" 
+    else: 
+        smth = ", "
+    par_str += k + "=" + str(v) + smth
+
+
+plt.xlabel('Time. Sample of size '+str(n_plot))
+plt.ylabel('trait');
+plt.title(par_str)
+#plt.show()
+current_time = datetime.now().time()
+figure.savefig(str("Figures_Lineage/plot_" + str(current_time)[0:8]+".pdf")) # Possibly different delimeter on Linux and Windows!
+
+
+#gc.collect()
