@@ -42,7 +42,7 @@ plt.title(par_str+'. Frequence expcted = '+str(freq_expected))
 from scipy import signal
 
 freq_ech=parameters['T_max']/parameters['dT']
-freq_expected=parameters['T_max']/20
+freq_expected=parameters['T_max']/30
 delta=0.
 
 low = freq_expected*(1-delta) / ( freq_ech)
@@ -75,7 +75,7 @@ b, a = signal.butter(3, band, btype=typefilter, analog=False)
 
 #TOTAL SIZE OF THE POPULATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Pop_tot=Ord_tot[t_calculus:T_calculus]
-Pop_tot=(Pop_tot-Pop_tot.mean())/1000+Mean_trait.mean()
+Pop_tot=-(Pop_tot-Pop_tot.mean())/1000+Mean_trait.mean()
 Pop_tot=signal.filtfilt(b, a, Pop_tot)
 
 
