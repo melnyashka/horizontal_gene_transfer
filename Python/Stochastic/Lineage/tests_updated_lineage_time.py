@@ -89,4 +89,4 @@ current_time = datetime.now().time()
 figure.savefig(str("Figures_Lineage/plot_" + str(current_time)[0:8]+".pdf")) # Possibly different delimeter on Linux and Windows!
 
 
-#gc.collect()
+gc.collect()
