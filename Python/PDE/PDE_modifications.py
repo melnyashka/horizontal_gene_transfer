@@ -1,52 +1,42 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import gc 
-
-def i_to_x(i, parameters): # return the vector of traits by given vector of densities
+def compute_things(parameters):
     L, dX = parameters['L'], parameters['dX']
-    return  -L+i*dX
-
-def I_to_x(parameters):
-    return np.vectorize(lambda i: i_to_x(i, parameters),otypes=[float])
-
-
-
-
-def f_to_x(f, parameters): # return the vector of traits by given vector of densities
-    L, dX = parameters['L'], parameters['dX']
-    return list(map(lambda i: -L+i*dX, range(int(2*L/dX))))
-
-
+    X_min, X_max= -L, L
+    nX = int((X_max-X_min)/dX)
+    # Create a new dictionary with: computed vector of traits, computed birth/death rate
+    X = np.vectorize(lambda i: -parameters['L']+i*parameters['dX'],otypes=[float])(range(nX)) # reconstruct traits by index
+    death_kernel = np.vectorize(lambda x: parameters['d_r']*np.power(np.absolute(x),parameters['d_e']))(X) 
+    # ht_kernel = np.vectorize(lambda x: np.dot(parameters['tau'],np.heaviside(x-X, 1)))(X)
+    
+    init_density = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/parameters['sigma0']*parameters['eps'])
+    rho0=np.sum(init_density)
+    init_density=init_density*parameters['C']/rho0
+    new_dict = {'X' : X,
+                'death_kernel': death_kernel, 
+                'init_density': init_density}
+    return new_dict    
 
 def tau_ht(x,y, n_tot, parameters): # horizontal transfer function
     tau, beta, mu = parameters['tau'], parameters['beta'], parameters['sigma']
     return tau*np.divide(np.heaviside(y-x, 1), (beta+n_tot*mu))
 
-
-
-def Next_Generation_PDE(f,parameters):
-    dT, b_r, d_r, d_e, K, C  = parameters['dT'], parameters['b_r'], parameters['d_r'], parameters['d_e'], parameters['K'], parameters['C']
-    L, dX, T_max, dT = parameters['L'], parameters['dX'], parameters['T_max'], parameters['dT']
-    X_min, X_max= -L, L
-    nX = int((X_max-X_min)/dX) # number of traits
-    x = np.arange(X_min,X_max,dX)
+def Next_Generation_PDE(f,parameters, pre_values):
+    dT, b_r, dX, sigma = parameters['dT'], parameters['b_r'], parameters['dX'], parameters['sigma']
+    x = pre_values['X']
     n_tot = np.sum(f)
-    death = d_r*np.power(np.absolute(x),d_e) + n_tot*C/K
-    dX, sigma = parameters['dX'], parameters['sigma']
-    birth_part = np.array(list(map(lambda y: b_r*np.sum(f*np.exp(-np.abs(x-y)/sigma))*dX, x))) # birth part of the integro-differential equation
-    transfer_part = (f*np.array(list(map(lambda y: np.sum(np.divide(tau_ht(x,y,n_tot,parameters)*f, n_tot)), x))))*dX 
-    new_f = f - dT*(death+n_tot)*f + birth_part + transfer_part
+    death = pre_values['death_kernel'] + n_tot*parameters['C']
+    birth_part = b_r/(sigma*parameters['eps'])*dX*np.vectorize(lambda y: np.sum(np.dot(f,np.exp(-(np.abs(y-x)/(parameters['eps']*sigma)**2)))), otypes=[float])(x)
+    #sigma* laplacian of f
+    Laplacian_f= sigma*(np.append(f[1:],f[-1])+np.insert(f[:-1],0,f[-1])-2*f)/(parameters['dX']**2)
+    transfer_part = np.vectorize(lambda y: np.sum(np.divide(tau_ht(x,y,n_tot,parameters)*f, n_tot)),otypes=[float])(x)
+    new_f = f + dT/parameters['eps']*(-death*f + birth_part+ transfer_part*f)
     gc.collect()
     return new_f
 
 
 
-def birth_kernel(x,parameters):
-    return parameters['b_r']*np.exp(-(x-X)**2/parameters['sigma'])
-    
-def birth_term(x,f,parameters):
-    return np.dot(birth_kernel(x,parameters),f)
 
-def Birth(f,parameters):
-    return np.vectorize(lambda x: birth_term(x,f, parameters),otypes=[float])(X)
+
 

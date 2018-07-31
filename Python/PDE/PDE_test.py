@@ -1,9 +1,9 @@
-parameters = dict(T_max = 100, # maximal time 
-                  dT = 0.1, # Discretization time 
+parameters = dict(T_max = 7, # maximal time 
+                  dT = 0.01, # Discretization time 
                   K = 1000, # Maximal capacity of the system
                   N0 = 1000,    # Initial number of population
                   sigma0 = 0.1,  #Initial standard variation of the population
-                  x_mean0 = 0.,
+                  x_mean0 = 1.,
                   C = 0.5,    # competition
 #                 p = 0.03,      # Probability of mutation
                   b_r = 1,     # birth rate
@@ -12,9 +12,9 @@ parameters = dict(T_max = 100, # maximal time
                   beta = 0, 
                   mu = 1,
                   sigma = 0.01,
-                  tau = 0.17,  # transfer rate
+                  tau = 0.5,  # transfer rate
                   L = 3, #length of the numerical interval of traits (for PDE!)
-                  dX = 0.01, #discretization of the space of traits
+                  dX = 0.1, #discretization of the space of traits
                   eps = 1
                   )
 
@@ -29,3 +29,20 @@ XT[0] = pre_values['init_density']
 
 for i in range(nT-1):
     XT[i+1] = Next_Generation_PDE(XT[i],parameters, pre_values)
+    if i%10==0:
+        print('T= '+str(i*parameters['dT']))
+
+
+
+
+
+#PLOT !!!!!!!!!!!!!!!!!
+
+import matplotlib.pyplot as plt
+from pylab import meshgrid,cm,imshow,contour,clabel,colorbar,axis,title,show
+from matplotlib import cm
+
+figure = plt.figure()
+im = imshow(XT,cmap=cm.coolwarm,aspect='auto')
+colorbar(im)
+
