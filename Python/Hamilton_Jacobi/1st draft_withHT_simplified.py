@@ -26,7 +26,8 @@ parameters_HJ = dict(T_max = 400, # maximal time
                 mu = 1,
                 sigma = 0.01,
                 tau = 5, # transfer rate
-                L=4, #space trait X=[-L,L]
+                X_min=-2,
+                X_max=6,
                 dX=1/100, #discretization of space trait
                 u_inf=-50
                 )
@@ -38,8 +39,8 @@ nT=int(parameters_HJ['T_max']/parameters_HJ['dT']) #number of times
 T=[t*parameters_HJ['dT'] for t in range(nT)] #list of all times
 T= np.array(T)
 
-X_min = -parameters_HJ['L']   # Minimal trait
-X_max = parameters_HJ['L']  # Maximum amount of traits
+X_min = parameters_HJ['X_min']   # Minimal trait
+X_max = parameters_HJ['X_max']  # Maximum amount of traits
 nX =int((X_max-X_min)/parameters_HJ['dX']) # number of traits
 X = [X_min+x*parameters_HJ['dX'] for x in range(nX)] # list of possible traits
 X=np.array(X)
@@ -127,7 +128,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 figure = plt.figure()
 #im = imshow(u.transpose(),cmap=cm.coolwarm)
-im = imshow(u.transpose(),cmap=cm.coolwarm,aspect='auto',extent=(0,parameters_HJ['T_max'],X_min,X_max))
+im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters_HJ['T_max'],X_min,X_max))
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters_HJ.items():
@@ -137,9 +138,10 @@ for k, v in parameters_HJ.items():
         smth = ", "
     par_str += k + "=" + str(v) + smth
 
-plt.ylabel('time')
-plt.xlabel('trait');
+plt.xlabel('time')
+plt.ylabel('trait');
 plt.title(par_str)
+plt.tight_layout()
 #levellines=np.array([-0.01])
 #cset = contour(u.transpose(),levellines,linewidths=2,cmap=cm.Set2)
 #clabel(cset,inline=True,fmt='%1.1f',fontsize=10)
