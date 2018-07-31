@@ -23,8 +23,8 @@ X_min, X_max= -L, L
 nX = int((X_max-X_min)/dX) # number of traits
 X = np.arange(0,dX*nX,dX) # list of possible traits
 F0 = np.exp(-np.power(np.absolute(X),2)/parameters['sigma0']*parameters['eps']) # initial density 
-XT = np.empty([int(T_max*dT), nX])
+XT = np.empty([int(T_max/dT), nX])
 XT[0] = F0
 
-for i in range(int(T_max*dT)-1):
-    XT[i + 1] = Next_Generation_PDE(XT[i])
+for i in range(int(T_max/dT)-1):
+    XT[i + 1] = Next_Generation_PDE(XT[i], parameters)
