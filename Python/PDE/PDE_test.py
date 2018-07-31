@@ -14,17 +14,18 @@ parameters = dict(T_max = 100, # maximal time
                   sigma = 0.01,
                   tau = 0.17,  # transfer rate
                   L = 3, #length of the numerical interval of traits (for PDE!)
-                  dX = 0.001, #discretization of the space of traits
+                  dX = 0.01, #discretization of the space of traits
                   eps = 1
                   )
 
 L, dX, T_max, dT = parameters['L'], parameters['dX'], parameters['T_max'], parameters['dT']
 X_min, X_max= -L, L
+nT = int(T_max/dT)
 nX = int((X_max-X_min)/dX) # number of traits
-X = np.arange(X_min,X_max,dX) # list of possible traits
-F0 = np.exp(-np.power(X-parameters['x_mean0'],2)/parameters['sigma0']*parameters['eps']) # initial density 
-XT = np.empty([int(T_max/dT), nX])
-XT[0] = F0
+XT = np.empty([nT, nX]) # initial density 
 
-for i in range(int(T_max/dT)-1):
-    XT[i + 1] = Next_Generation_PDE(XT[i], parameters)
+pre_values = compute_things(parameters)                
+XT[0] = pre_values['init_density']
+
+for i in range(nT-1):
+    XT[i+1] = Next_Generation_PDE(XT[i],parameters, pre_values)
