@@ -27,4 +27,4 @@ XT = np.empty([int(T_max*dT), nX])
 XT[0] = F0
 
 for i in range(int(T_max*dT)-1):
-    XT[i + 1] = Next_Generation_PDE(XT[i])
+    XT[i + 1] = Next_Generation_PDE(XT[i], parameters)
