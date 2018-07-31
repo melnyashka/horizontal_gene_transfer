@@ -21,8 +21,8 @@ parameters = dict(T_max = 100, # maximal time
 L, dX, T_max, dT = parameters['L'], parameters['dX'], parameters['T_max'], parameters['dT']
 X_min, X_max= -L, L
 nX = int((X_max-X_min)/dX) # number of traits
-X = np.arange(0,dX*nX,dX) # list of possible traits
-F0 = np.exp(-np.power(np.absolute(X),2)/parameters['sigma0']*parameters['eps']) # initial density 
+X = np.arange(X_min,X_max,dX) # list of possible traits
+F0 = np.exp(-np.power(X-parameters['x_mean0'],2)/parameters['sigma0']*parameters['eps']) # initial density 
 XT = np.empty([int(T_max/dT), nX])
 XT[0] = F0
 
