@@ -13,7 +13,7 @@ from itertools import compress
 
 
 #Parameters
-parameters_HJ = dict(T_max = 500, # maximal time 
+parameters_HJ = dict(T_max = 200, # maximal time 
                 dT = 0.1, # Discretization time 
                 C=0.5, # carrying capacity of the system
                 rho0 = 1000,    # Initial number of population
@@ -24,10 +24,10 @@ parameters_HJ = dict(T_max = 500, # maximal time
                 d_e=2,      #exponent for the death function
                 beta = 0, 
                 mu = 1,
-                sigma = -0.01,
-                tau = 5, # transfer rate
-                X_min=-2,
-                X_max=5,
+                sigma = 0.001,
+                tau = 200, # transfer rate
+                X_min=-6,
+                X_max=30,
                 dX=1/100, #discretization of space trait
                 u_inf=-50
                 )
@@ -107,17 +107,18 @@ def Next_time_HJ(u,parameters_HJ):
 
 
 #Simulation
-M=0 #maximum of u
-t_extinction=0
+M=[] #maximum of u
+m=0.
+t_extinction=[]
 for i in range(int(parameters_HJ['T_max']/parameters_HJ['dT']-1)):
     if i%500==0:
         print('T= '+str(i*parameters_HJ['dT']))
         print('m = '+str(m))
     u[i+1],m=Next_time_HJ(u[i], parameters_HJ)
-    if m<0 and M==0:
-        print('coucou')
-        M=m
-        t_extinction=i*parameters_HJ['dT']
+    if m<0:
+        M=M+[m]
+        t_extinction=t_extinction+[i*parameters_HJ['dT']]
+        print('coucou! M='+str(M)+' and t_extinction='+str(t_extinction))
 
     
     
@@ -135,7 +136,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 figure = plt.figure()
 #im = imshow(u.transpose(),cmap=cm.coolwarm)
-im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters_HJ['T_max'],X_min,X_max))
+im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters_HJ['T_max'],X_min,X_max),vmin=-50)
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters_HJ.items():
@@ -147,7 +148,11 @@ for k, v in parameters_HJ.items():
 
 plt.xlabel('time')
 plt.ylabel('trait');
-plt.title(par_str)
+
+string_e='\nNumber of extinctions: '+str(len(t_extinction))
+if len(t_extinction)>0:
+    string_e=string_e+'. First extinction at time t= '+str(t_extinction[0])
+plt.title(par_str+string_e)
 plt.tight_layout()
 #levellines=np.array([-0.01])
 #cset = contour(u.transpose(),levellines,linewidths=2,cmap=cm.Set2)
