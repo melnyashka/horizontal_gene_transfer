@@ -45,22 +45,4 @@ def Next_Generation_lineage(x,l, parameters):
                                        l_add_HT))
         return x_new,l_new
 
-def build_and_save(Abs, Ord, parameters): # function for creating and saving plots
-    par_str = '' # create a string of parameters to pass into plots
-    for k, v in parameters.items():
-        if k == 'N0' or k == 'b_r': 
-            smth = ",\n" 
-        else: 
-            smth = ", "
-        par_str += k + "=" + str(v) + smth
-    figure = plt.figure()
-    plt.hist2d(Abs,Ord,bins=3/2*parameters['K'],cmap=plt.cm.bone_r,alpha=1,cmax=2*parameters['K'],cmin=parameters['K']/100)
-    #plt.hist2d(Abs, Ord, bins=parameters['K']/2, cmap=plt.cm.jet)
-    plt.colorbar()
-    plt.xlabel('time')
-    plt.ylabel('trait');
-    plt.title(par_str)
-    plt.show()
-    current_time = datetime.now().time()
-    figure.savefig(str("Figures/plot_" + str(current_time)[0:8]+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
-    
+ 

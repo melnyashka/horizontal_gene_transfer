@@ -43,5 +43,5 @@ def build_and_save(Abs, Ord, parameters): # function for creating and saving plo
     plt.title(par_str)
     plt.show()
     current_time = datetime.now().time()
-    figure.savefig(str("Figures/plot_" + str(current_time)[0:8]+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
+    figure.savefig(str("Figures/plot_" + str(current_time)[0:8].replace(':','_')+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
     

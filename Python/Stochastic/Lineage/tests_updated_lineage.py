@@ -67,7 +67,7 @@ plt.ylabel('trait');
 plt.title(par_str)
 #plt.show()
 current_time = datetime.now().time()
-figure.savefig(str("Figures_Lineage/plot_" + str(current_time)[0:8]+".pdf")) # Possibly different delimeter on Linux and Windows!
+figure.savefig(str("Figures_Lineage/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
 
 
 #gc.collect()

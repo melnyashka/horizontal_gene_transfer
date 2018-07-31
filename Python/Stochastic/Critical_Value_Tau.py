@@ -104,7 +104,7 @@ plt.ylabel('Tau_critical')
 plt.title(par_str)
 plt.show()
 current_time = datetime.now().time()
-figure.savefig(str("Figures/CriticalTau_param="+param+"__"+ str(current_time)[0:8]+".pdf"), bbox_inches='tight')
+figure.savefig(str("Figures/CriticalTau_param="+param+"__"+ str(current_time)[0:8].replace(':','_')+".pdf"), bbox_inches='tight')
 
 
 
