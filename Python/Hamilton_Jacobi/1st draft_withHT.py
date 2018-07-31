@@ -25,7 +25,7 @@ parameters_HJ = dict(T_max = 10, # maximal time
                 beta = 0, 
                 mu = 1,
                 sigma = 0.01,
-                tau = 2, # transfer rate
+                tau = 5, # transfer rate
                 L=4, #space trait X=[-L,L]
                 dX=1/100, #discretization of space trait
                 u_inf=-50
@@ -41,8 +41,8 @@ T= np.array(T)
 X_min = -parameters_HJ['L']   # Minimal trait
 X_max = parameters_HJ['L']  # Maximum amount of traits
 nX =int((X_max-X_min)/parameters_HJ['dX']) # number of traits
-X = [X_min+x*parameters_HJ['dX'] for x in range(nX)] # list of possible traits
-X=np.array(X)
+X = np.fromiter((X_min+i*parameters_HJ['dX'] for i in range(nX)),float) # list of possible traits
+
 
 
 def x_to_i_HJ (x):
