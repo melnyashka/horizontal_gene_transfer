@@ -13,21 +13,21 @@ from itertools import compress
 
 
 #Parameters
-parameters_HJ = dict(T_max = 2000, # maximal time 
+parameters_HJ = dict(T_max = 500, # maximal time 
                 dT = 0.1, # Discretization time 
                 C=0.5, # carrying capacity of the system
                 rho0 = 1000,    # Initial number of population
                 sigma0=1,  #Initial standard variation of the population
                 x0=0.,
-                b_r = 1,     # birth rate
+#                b_r = 1,     # birth rate
                 d_r = 1,      # death rate
                 d_e=2,      #exponent for the death function
                 beta = 0, 
                 mu = 1,
-                sigma = 0.01,
-                tau = 2.375, # transfer rate
+                sigma = -0.01,
+                tau = 5, # transfer rate
                 X_min=-2,
-                X_max=4,
+                X_max=5,
                 dX=1/100, #discretization of space trait
                 u_inf=-50
                 )
@@ -96,10 +96,10 @@ def Next_time_HJ(u,parameters_HJ):
     grad_u= (u[1:]-u[:-1])/parameters_HJ['dX']
     grad_u=np.insert(grad_u,0,grad_u[0])
     x_M=i_to_x_HJ(np.argmax(u))
-    u_add=-Death+np.dot(grad_u,grad_u)+HT_term(x_M)
+    u_add=-Death+parameters_HJ['sigma']*np.dot(grad_u,grad_u)+HT_term(x_M)
     u_new= u+u_add*parameters_HJ['dT']
-    
-    return np.maximum(u_new-np.max(u_new), parameters_HJ['u_inf'])
+    M=np.max(u_new)
+    return np.maximum(u_new-max(0,M), parameters_HJ['u_inf']),M
     
 
 
@@ -107,10 +107,18 @@ def Next_time_HJ(u,parameters_HJ):
 
 
 #Simulation
+M=0 #maximum of u
+t_extinction=0
 for i in range(int(parameters_HJ['T_max']/parameters_HJ['dT']-1)):
-    if i%100==0:
+    if i%500==0:
         print('T= '+str(i*parameters_HJ['dT']))
-    u[i+1]=Next_time_HJ(u[i], parameters_HJ)
+        print('m = '+str(m))
+    u[i+1],m=Next_time_HJ(u[i], parameters_HJ)
+    if m<0 and M==0:
+        print('coucou')
+        M=m
+        t_extinction=i*parameters_HJ['dT']
+
     
     
     
@@ -131,7 +139,7 @@ im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,paramet
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters_HJ.items():
-    if k == 'N0' or k == 'b_r': 
+    if k == 'N0' or k == 'd_r': 
         smth = ",\n" 
     else: 
         smth = ", "
@@ -147,7 +155,7 @@ plt.tight_layout()
 
 
 current_time = datetime.now().time()
-figure.savefig(str("Figures/Simplified_Laplacian/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
+figure.savefig(str("Figures/Simplified_PositiveCorrection/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
 
 
 
