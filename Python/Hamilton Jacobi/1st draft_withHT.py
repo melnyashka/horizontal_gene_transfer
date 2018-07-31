@@ -12,7 +12,6 @@ from datetime import datetime
 from itertools import compress
 
 
-
 #Parameters
 parameters_HJ = dict(T_max = 10, # maximal time 
                 dT = 0.1, # Discretization time 
@@ -80,13 +79,24 @@ Birth= np.vectorize(birth_term,otypes=[np.float64])
 
 
 
+#HORIZONTAL TRANSFER:
+def tau(x,y):
+    int(y>=x)parameters_HJ['tau']
+
+HT= np.vectorize()
+    
+
+
+
+
 #Evolution Operator
 def Next_time_HJ(u,parameters_HJ):
     grad_u= (u[1:]-u[:-1])/parameters_HJ['dX']
     grad_u=np.insert(grad_u,0,grad_u[0])
+    x_M=np.argmax(u)
     u_add=-Death+Birth(grad_u)
     u_new= u+u_add*parameters_HJ['dT']
-#    x_M=np.argmax(u_new)
+    
     return np.maximum(u_new-np.max(u_new), parameters_HJ['u_inf'])
     
 
@@ -128,7 +138,7 @@ plt.xlabel('trait');
 plt.title(par_str)
 
 current_time = datetime.now().time()
-figure.savefig(str("Figures/plot_" + str(current_time)[0:8]+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
+figure.savefig(str("Figures/plot_" + str(current_time)[0:8].replace(':','_')+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
     
 
 
