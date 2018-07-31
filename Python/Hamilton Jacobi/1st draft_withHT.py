@@ -12,7 +12,6 @@ from datetime import datetime
 from itertools import compress
 
 
-
 #Parameters
 parameters_HJ = dict(T_max = 10, # maximal time 
                 dT = 0.1, # Discretization time 
