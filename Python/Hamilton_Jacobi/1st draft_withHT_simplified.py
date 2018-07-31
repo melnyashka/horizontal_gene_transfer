@@ -13,19 +13,19 @@ from itertools import compress
 
 
 #Parameters
-parameters_HJ = dict(T_max = 10, # maximal time 
+parameters_HJ = dict(T_max = 400, # maximal time 
                 dT = 0.1, # Discretization time 
                 C=0.5, # carrying capacity of the system
                 rho0 = 1000,    # Initial number of population
                 sigma0=1,  #Initial standard variation of the population
-                x0=3.5,
+                x0=0.,
                 b_r = 1,     # birth rate
                 d_r = 1,      # death rate
                 d_e=2,      #exponent for the death function
                 beta = 0, 
                 mu = 1,
                 sigma = 0.01,
-                tau = 0.1, # transfer rate
+                tau = 5, # transfer rate
                 L=4, #space trait X=[-L,L]
                 dX=1/100, #discretization of space trait
                 u_inf=-50
@@ -33,7 +33,7 @@ parameters_HJ = dict(T_max = 10, # maximal time
 
 
 
-#Grid of time and triat
+#Grid of time and trait
 nT=int(parameters_HJ['T_max']/parameters_HJ['dT']) #number of times
 T=[t*parameters_HJ['dT'] for t in range(nT)] #list of all times
 T= np.array(T)
@@ -70,20 +70,22 @@ Death= (np.vectorize(death,otypes=[np.float64]))(X)
 
 
 #BIRTH:
-def birth_kernel(p,z):
-    return np.exp(-(z/parameters_HJ['sigma'])**2+p*z)*parameters_HJ['b_r']
-def birth_term(p):
-    return np.sum(np.vectorize(lambda x: birth_kernel(p,x),otypes=[np.float64])(X))*parameters_HJ['dX']
-
-Birth= np.vectorize(birth_term,otypes=[np.float64])
-
+#def birth_kernel(p,z):
+#    return np.exp(-(z/parameters_HJ['sigma'])**2+p*z)*parameters_HJ['b_r']
+#def birth_term(p):
+#    return np.sum(np.vectorize(lambda x: birth_kernel(p,x),otypes=[np.float64])(X))*parameters_HJ['dX']
+#
+#Birth= np.vectorize(birth_term,otypes=[np.float64])
+#
 
 
 #HORIZONTAL TRANSFER:
-def tau(x,y):
-    int(y>=x)parameters_HJ['tau']
+def tau_kernel(x,y):
+    return (np.arctan(x-y)-np.arctan(y-x))*parameters_HJ['tau']
+def HT_term(y):
+    return np.vectorize(lambda x: tau_kernel(x,y), otypes=[np.float64])(X)
 
-HT= np.vectorize()
+
     
 
 
@@ -93,8 +95,8 @@ HT= np.vectorize()
 def Next_time_HJ(u,parameters_HJ):
     grad_u= (u[1:]-u[:-1])/parameters_HJ['dX']
     grad_u=np.insert(grad_u,0,grad_u[0])
-    x_M=np.argmax(u)
-    u_add=-Death+Birth(grad_u)
+    x_M=i_to_x_HJ(np.argmax(u))
+    u_add=-Death+np.dot(grad_u,grad_u)+HT_term(x_M)
     u_new= u+u_add*parameters_HJ['dT']
     
     return np.maximum(u_new-np.max(u_new), parameters_HJ['u_inf'])
@@ -123,7 +125,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 figure = plt.figure()
-im = imshow(u[:80],cmap=cm.coolwarm)
+im = imshow(u.transpose(),cmap=cm.coolwarm)
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters_HJ.items():
@@ -136,10 +138,14 @@ for k, v in parameters_HJ.items():
 plt.ylabel('time')
 plt.xlabel('trait');
 plt.title(par_str)
+levellines=np.array([-0.01])
+cset = contour(u.transpose(),levellines,linewidths=2,cmap=cm.Set2)
+clabel(cset,inline=True,fmt='%1.1f',fontsize=10)
+
 
 current_time = datetime.now().time()
-figure.savefig(str("Figures/plot_" + str(current_time)[0:8].replace(':','_')+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
-    
+figure.savefig(str("Figures/Simplified_Laplacian/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
+
 
 
 
