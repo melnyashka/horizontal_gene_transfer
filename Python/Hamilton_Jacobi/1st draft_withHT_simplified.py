@@ -108,7 +108,7 @@ def Next_time_HJ(u,parameters_HJ):
 
 #Simulation
 for i in range(int(parameters_HJ['T_max']/parameters_HJ['dT']-1)):
-    if i%10==0:
+    if i%100==0:
         print('T= '+str(i*parameters_HJ['dT']))
     u[i+1]=Next_time_HJ(u[i], parameters_HJ)
     
@@ -124,8 +124,10 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
+
 figure = plt.figure()
-im = imshow(u.transpose(),cmap=cm.coolwarm)
+#im = imshow(u.transpose(),cmap=cm.coolwarm)
+im = imshow(u.transpose(),cmap=cm.coolwarm,aspect='auto',extent=(0,parameters_HJ['T_max'],X_min,X_max))
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters_HJ.items():
@@ -138,9 +140,9 @@ for k, v in parameters_HJ.items():
 plt.ylabel('time')
 plt.xlabel('trait');
 plt.title(par_str)
-levellines=np.array([-0.01])
-cset = contour(u.transpose(),levellines,linewidths=2,cmap=cm.Set2)
-clabel(cset,inline=True,fmt='%1.1f',fontsize=10)
+#levellines=np.array([-0.01])
+#cset = contour(u.transpose(),levellines,linewidths=2,cmap=cm.Set2)
+#clabel(cset,inline=True,fmt='%1.1f',fontsize=10)
 
 
 current_time = datetime.now().time()
