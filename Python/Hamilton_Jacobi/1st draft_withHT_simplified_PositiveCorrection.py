@@ -36,8 +36,7 @@ parameters_HJ = dict(T_max = 200, # maximal time
 
 #Grid of time and trait
 nT=int(parameters_HJ['T_max']/parameters_HJ['dT']) #number of times
-T=[t*parameters_HJ['dT'] for t in range(nT)] #list of all times
-T= np.array(T)
+T = np.fromiter((i*parameters_HJ['dT'] for i in range(nT)),float)
 
 X_min = parameters_HJ['X_min']   # Minimal trait
 X_max = parameters_HJ['X_max']  # Maximum amount of traits
