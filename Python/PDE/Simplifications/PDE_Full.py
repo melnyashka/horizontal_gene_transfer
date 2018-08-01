@@ -10,7 +10,7 @@ parameters = dict(T_max = 100, # maximal time
                   K = 1000, # Maximal capacity of the system
                   N0 = 1000,    # Initial number of population
                   sigma0 = 0.1,  #Initial standard variation of the population
-                  x_mean0 = 0.,
+                  x_mean0 = 1.,
                   C = 0.5,    # competition
 #                 p = 0.03,      # Probability of mutation
                   b_r = 1,     # birth rate
@@ -19,7 +19,7 @@ parameters = dict(T_max = 100, # maximal time
                   beta = 0, 
                   mu = 1,
                   sigma = 0.1,
-                  tau = 0.,  # transfer rate
+                  tau = 0.2,  # transfer rate
                   X_min = -1, #length of the numerical interval of traits (for PDE!)
                   X_max=2.5,
                   dX = 0.01, #discretization of the space of traits
@@ -30,14 +30,16 @@ X_min, X_max= parameters['X_min'], parameters['X_max']
 
 
 #GRID !!!!!!!!!!!!!!!!!!
+
 #TIME
 nT = int(T_max/dT)#number of times
-T = np.fromiter((i*parameters['dT'] for i in range(nT)),float)#space of time
+T = np.arange(0,T_max,dT)#space of time
 
 nX = int((X_max-X_min)/dX) # number of traits
-X = np.fromiter((X_min+i*parameters['dX'] for i in range(nX)),float)#space of traits
+I=range(nX)
+X = np.arange(X_min,X_max,dX)#space of traits
 
-
+#X_large=np.arange(2*X_min,2*X_max,dX)
 
 
 
@@ -55,27 +57,26 @@ f[0]=f0
 
 #AUXILIARY FUNCTIONS
 
+#DEATH
 Death= parameters['d_r']*np.power(np.absolute(X),parameters['d_e'])
 # ht_kernel = np.vectorize(lambda x: np.dot(parameters['tau'],np.heaviside(x-X, 1)))(X)
+
+#MUTATION
+sigma_eps= parameters['sigma']*parameters['eps']
+constant=np.sqrt(2*np.pi)
+Mutation_kernel=  parameters['b_r']/(sigma_eps*constant)*np.exp(-(X/sigma_eps)**2)*parameters['dX']
+X_min_new=int(-X_min/dX)
+X_max_new=int((-2*X_min+X_max)/dX)
 
 
 def Next_Generation_PDE(f,parameters):
     dT, b_r, dX, sigma = parameters['dT'], parameters['b_r'], parameters['dX'], parameters['sigma']
     rho = np.sum(f)
     death_term = Death + rho*parameters['C']
-    birth_part = b_r/(sigma*parameters['eps'])*dX*np.vectorize(lambda y: np.sum(np.dot(f,np.exp(-(np.abs(y-X)/(parameters['eps']*sigma)**2)))), otypes=[float])(X)
-    Laplacian_f= sigma*(np.append(f[1:],f[-1])+np.insert(f[:-1],0,f[-1])-2*f)/(parameters['dX']**2)
-    transfer_part = np.vectorize(lambda x: parameters['tau']*(np.sum(f[:int((x-X_min)/dX)])-np.sum(f[int((x-X_min)/dX):]))/rho,otypes=[float])(X)
-    #transfer_part=0
+    birth_part = np.convolve(Mutation_kernel,f)[X_min_new:X_max_new]
+    transfer_part = parameters['tau']/rho*np.fromiter((np.sum(f[:i])-np.sum(f[i:]) for i in I),float)
     new_f = np.maximum(0,f + dT/parameters['eps']*(f*(-death_term+ transfer_part)+birth_part))
     return new_f
-
-
-
-
-
-
-
 
 
 #SIMULATION !!!!!!!!!!!!!!!!!!
