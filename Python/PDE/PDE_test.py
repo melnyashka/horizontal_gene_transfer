@@ -1,4 +1,4 @@
-parameters = dict(T_max = 7, # maximal time 
+parameters = dict(T_max = 500, # maximal time 
                   dT = 0.01, # Discretization time 
                   K = 1000, # Maximal capacity of the system
                   N0 = 1000,    # Initial number of population
@@ -11,10 +11,10 @@ parameters = dict(T_max = 7, # maximal time
                   d_e = 2,   #exponetial power
                   beta = 0, 
                   mu = 1,
-                  sigma = 0.01,
-                  tau = 0.5,  # transfer rate
+                  sigma = 0.1,
+                  tau = 0.8,  # transfer rate
                   L = 3, #length of the numerical interval of traits (for PDE!)
-                  dX = 0.1, #discretization of the space of traits
+                  dX = 0.01, #discretization of the space of traits
                   eps = 1
                   )
 

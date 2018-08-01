@@ -12,7 +12,7 @@ def compute_things(parameters):
     
     init_density = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/parameters['sigma0']*parameters['eps'])
     rho0=np.sum(init_density)
-    init_density=init_density/(parameters['C']*rho0)*(parameters['b_r'])
+    init_density=init_density/(parameters['C']*rho0*100)*(parameters['b_r'])
     new_dict = {'X' : X,
                 'death_kernel': death_kernel, 
                 'init_density': init_density,
