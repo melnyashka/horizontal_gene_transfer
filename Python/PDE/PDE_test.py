@@ -32,10 +32,6 @@ for i in range(nT-1):
     if i%10==0:
         print('T= '+str(i*parameters['dT']))
 
-
-
-
-
 #PLOT !!!!!!!!!!!!!!!!!
 
 import matplotlib.pyplot as plt
