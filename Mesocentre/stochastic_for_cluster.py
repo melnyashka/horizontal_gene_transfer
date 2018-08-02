@@ -48,16 +48,18 @@ def build_and_save(Abs, Ord, parameters, path): # function for creating and savi
     # figure.savefig(str(path +"plot_" + str(current_time)[0:8].replace(':','_')+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
     
     figure.savefig(str(path +"plot_" + str(current_time)[0:8]+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
-    
+    plt.close() 
 
 ########################################################################################
 ###                  Executable part 
 ########################################################################################
 
-parameters = dict(T_max = 1000, # maximal time 
+print("Hello")
+
+parameters = dict(T_max = 100, # maximal time 
                   dT = 0.1, # Discretization time 
-                  K = 10000, # Maximal capacity of the system
-                  N0 = 10000,    # Initial number of population
+                  K = 1000, # Maximal capacity of the system
+                  N0 = 1000,    # Initial number of population
                  sigma0=0.1,  #Initial standard variation of the population
                  beta = 0, 
                  d_e = 2,
@@ -73,19 +75,19 @@ parameters = dict(T_max = 1000, # maximal time
 tau_i = np.arange(0.05,1.,0.05)
 
 for i in range(len(tau_i)):
-    print(str(i) + " and " + str(tau_i[i]))
+    print(str(i) + " and " + str(tau_i[i]), flush = True)
     parameters['tau'] = tau_i[i]
     X0 = np.random.normal(1, parameters['sigma0'], parameters['N0']) # Initial population
     # X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
     X = np.sort(X0)
 
-    Abs=[]   
-    Ord=[]
+    Abs=np.empty([])   
+    Ord=np.empty([])
 
     for i in range(int(parameters['T_max']/parameters['dT']-1)):
         for x in X:
-            Abs.extend([i*parameters['dT']])
-            Ord.extend([x])
+            Abs = np.append(Abs,[i*parameters['dT']])
+            Ord = np.append(Ord, [x])
         X=Next_Generation(X, parameters)
         gc.collect()
     build_and_save(Abs, Ord, parameters, path = "/scratch/gene/Figures/") 
