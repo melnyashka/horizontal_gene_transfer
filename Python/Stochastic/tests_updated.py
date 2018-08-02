@@ -26,11 +26,13 @@ X = np.sort(X0)
 
 Abs=[]#Save all the individuals
 Ord=[]
-for i in range(int(parameters['T_max']/parameters['dT']-1)):
-    for x in X:
-        Abs.append(i*parameters['dT'])
-        Ord.append(x)
-    X=Next_Generation(X, parameters)
-    
-#build_and_save(Abs, Ord, parameters) # build and save a plot in folder Figures in home directory (you must create it first!)
-gc.collect()
+
+for tau_iter in np.arange(0, 2, 0.1):
+    parameters['tau'] = tau_iter
+    for i in range(int(parameters['T_max']/parameters['dT']-1)):
+        for x in X:
+            Abs.append(i*parameters['dT'])
+            Ord.append(x)
+        X=Next_Generation(X, parameters)
+    build_and_save(Abs, Ord, parameters, path = "Figures/") # build and save a plot in folder Figures in home directory (you must create it first!)
+    gc.collect()
