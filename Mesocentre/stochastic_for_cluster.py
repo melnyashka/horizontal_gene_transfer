@@ -56,10 +56,10 @@ def build_and_save(Abs, Ord, parameters, path): # function for creating and savi
 
 print("Hello")
 
-parameters = dict(T_max = 100, # maximal time 
+parameters = dict(T_max = 300, # maximal time 
                   dT = 0.1, # Discretization time 
-                  K = 1000, # Maximal capacity of the system
-                  N0 = 1000,    # Initial number of population
+                  K = 10000, # Maximal capacity of the system
+                  N0 = 10000,    # Initial number of population
                  sigma0=0.1,  #Initial standard variation of the population
                  beta = 0, 
                  d_e = 2,
@@ -87,9 +87,10 @@ for i in range(len(tau_i)):
     for i in range(int(parameters['T_max']/parameters['dT']-1)):
         for x in X:
             Abs = np.append(Abs,[i*parameters['dT']])
-            Ord = np.append(Ord, [x])
+            Ord = np.append(Ord,[x])
         X=Next_Generation(X, parameters)
-        gc.collect()
+        print("We have just ended another iteration!, that is"+str(i), flush = True)
+    gc.collect()
     build_and_save(Abs, Ord, parameters, path = "/scratch/gene/Figures/") 
  
     
