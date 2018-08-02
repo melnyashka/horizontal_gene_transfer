@@ -25,7 +25,7 @@ parameters_HJ = dict(T_max = 200, # maximal time
                 beta = 0, 
                 mu = 1,
                 sigma = 0.001,
-                tau = 49.75, # transfer rate
+                tau = 200, # transfer rate
                 X_min=-6,
                 X_max=30,
                 dX=1/100, #discretization of space trait
@@ -112,13 +112,12 @@ t_extinction=[]
 for i in range(int(parameters_HJ['T_max']/parameters_HJ['dT']-1)):
     if i%500==0:
         print('T= '+str(i*parameters_HJ['dT']))
-        #print('m = '+str(m))
+        print('m = '+str(m))
     u[i+1],m=Next_time_HJ(u[i], parameters_HJ)
     if m<0:
         M=M+[m]
         t_extinction=t_extinction+[i*parameters_HJ['dT']]
-        print('coucou!') 
-
+        print('coucou! M='+str(M)+' and t_extinction='+str(t_extinction))
 
     
     
@@ -160,7 +159,7 @@ plt.tight_layout()
 
 
 current_time = datetime.now().time()
-figure.savefig(str("Figures/Simplified_PositiveCorrection/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
+figure.savefig(str("Figures/Full/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
 
 
 

@@ -8,8 +8,8 @@ from pylab import meshgrid,cm,imshow,contour,clabel,colorbar,axis,title,show
 from matplotlib import cm
 
 #PARAMETERS !!!!!!!!!!!!!!!!!!!!!!!!
-parameters = dict(T_max = 2, # maximal time 
-                  dT = 0.00001, # Discretization time 
+parameters = dict(T_max = 3, # maximal time 
+                  dT = 0.0001, # Discretization time 
                   sigma0 = 0.01,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -20,7 +20,7 @@ parameters = dict(T_max = 2, # maximal time
                   beta = 0, 
                   mu = 1,
                   sigma = 1,
-                  tau = 1,  # transfer rate
+                  tau = 1.,  # transfer rate
                   X_min = -0.2, #length of the numerical interval of traits (for PDE!)
                   X_max=1.5,
                   dX = 0.01, #discretization of the space of traits
@@ -57,9 +57,9 @@ f[0]=f0
 
 #LOOP OVER PARAMETERS !!!!!!!!!!!!!!!!!!!
 param='tau'
-param_m=25
-param_M=26
-param_step=1
+param_m=10
+param_M=56
+param_step=10000
 J=np.arange(param_m,param_M,param_step)
 for j in J:
     f[0]=f0
@@ -84,6 +84,8 @@ for j in J:
     
     def Next_Generation_PDE(f,parameters):
         rho = np.sum(f)
+        if rho==0:
+            return 0
         death_term = Death + rho*parameters['C']
         birth_part = np.convolve(Mutation_kernel,f)[X_min_new:X_max_new]
         transfer_part = parameters['tau']/rho*parameters['dX']*np.fromiter((np.sum(f[:i])-np.sum(f[i:]) for i in I),float)
