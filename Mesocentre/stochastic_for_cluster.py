@@ -79,13 +79,13 @@ for i in range(len(tau_i)):
     # X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
     X = np.sort(X0)
 
-    Abs=[]   
-    Ord=[]
+    Abs=np.empty([])   
+    Ord=np.empty([])
 
     for i in range(int(parameters['T_max']/parameters['dT']-1)):
         for x in X:
-            Abs.extend([i*parameters['dT']])
-            Ord.extend([x])
+            Abs.append([i*parameters['dT']])
+            Ord.append([x])
         X=Next_Generation(X, parameters)
         gc.collect()
     build_and_save(Abs, Ord, parameters, path = "/scratch/gene/Figures/") 
