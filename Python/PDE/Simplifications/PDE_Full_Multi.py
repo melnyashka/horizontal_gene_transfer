@@ -8,8 +8,8 @@ from pylab import meshgrid,cm,imshow,contour,clabel,colorbar,axis,title,show
 from matplotlib import cm
 
 #PARAMETERS !!!!!!!!!!!!!!!!!!!!!!!!
-parameters = dict(T_max = 5, # maximal time 
-                  dT = 0.0001, # Discretization time 
+parameters = dict(T_max = 2, # maximal time 
+                  dT = 0.00001, # Discretization time 
                   sigma0 = 0.01,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -22,9 +22,9 @@ parameters = dict(T_max = 5, # maximal time
                   sigma = 1,
                   tau = 1,  # transfer rate
                   X_min = -0.2, #length of the numerical interval of traits (for PDE!)
-                  X_max=2,
+                  X_max=1.5,
                   dX = 0.01, #discretization of the space of traits
-                  eps = 0.01
+                  eps = 0.001
                   )
 dX, T_max, dT = parameters['dX'], parameters['T_max'], parameters['dT']
 X_min, X_max= parameters['X_min'], parameters['X_max']
@@ -57,8 +57,8 @@ f[0]=f0
 
 #LOOP OVER PARAMETERS !!!!!!!!!!!!!!!!!!!
 param='tau'
-param_m=1
-param_M=200
+param_m=25
+param_M=26
 param_step=1
 J=np.arange(param_m,param_M,param_step)
 for j in J:
@@ -77,7 +77,7 @@ for j in J:
     #MUTATION
     sigma_eps= parameters['sigma']*parameters['eps']
     constant=np.sqrt(2*np.pi)
-    Mutation_kernel=  parameters['b_r']/(sigma_eps*constant)*np.exp(-(X/sigma_eps)**2)*parameters['dX']
+    Mutation_kernel=  parameters['b_r']/(sigma_eps*constant)*np.exp(-(X/sigma_eps)**2*1/2)*parameters['dX']
     X_min_new=int(-X_min/dX)#Bounds for the new indexes that must be kept after the convolution
     X_max_new=int((-2*X_min+X_max)/dX)
     
