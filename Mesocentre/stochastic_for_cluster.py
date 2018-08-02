@@ -87,8 +87,7 @@ for i in range(len(tau_i)):
             Abs.extend([i*parameters['dT']])
             Ord.extend([x])
         X=Next_Generation(X, parameters)
-        if i%100==0: 
-            gc.collect()
+        gc.collect()
     build_and_save(Abs, Ord, parameters, path = "/scratch/gene/Figures/") 
  
     
