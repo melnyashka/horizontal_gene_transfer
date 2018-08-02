@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import gc
 from datetime import datetime
 from itertools import compress
-
+#matplotlib.use("Agg")
 
 #Parameters
 parameters_HJ = dict(T_max = 3, # maximal time 
@@ -176,7 +176,7 @@ for j in J:
     
     current_time = datetime.now().time()
     figure.savefig(str("Figures/Simplified_PositiveCorrection/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
-    
+#   figure.savefig(str("scratch/gene/Figures" +"plot_" + str(current_time)[0:8]+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
 
 
 
