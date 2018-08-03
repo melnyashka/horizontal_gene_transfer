@@ -60,10 +60,10 @@ def build_and_save(Abs, Ord, XT, parameters, path): # function for creating and 
 
 print("Hello")
 
-parameters = dict(T_max = 30, # maximal time 
+parameters = dict(T_max = 300, # maximal time 
                   dT = 0.1, # Discretization time 
-                  K = 1000, # Maximal capacity of the system
-                  N0 = 1000,    # Initial number of population
+                  K = 10000, # Maximal capacity of the system
+                  N0 = 10000,    # Initial number of population
                  sigma0=0.1,  #Initial standard variation of the population
                  beta = 0, 
                  d_e = 2,
@@ -110,7 +110,7 @@ for i in range(len(tau_i)):
         X=Next_Generation(X, parameters)
         if i%100 == 0: print("That is our "+str(i)+ "-th iteration, from the last one passed "+str(round(time()-start_time, 3))+"s", flush = True)
     gc.collect()
-    build_and_save(Abs, Ord, XT, parameters, path = "/scratch/gene/Figures/") 
+    build_and_save(Abs, Ord, XT, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/") 
  
     
 
