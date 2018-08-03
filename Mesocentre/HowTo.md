@@ -28,9 +28,9 @@ Terminals are fun! Here is a small reminder for the usage of the termminal which
 
 Now, the script, which launch the cluster, is called *slurmjob.sh*. But before launching the script, you have to put your own script to cluster in the folder *horizontal_gene_transfer/Mesocentre/*. It is very simple! Put the code from your machine to your GitHub folder with the same name, and then push your changes to the server. It is done! Now, go inside *horizontal_gene_transfer* (using **cd**, of course) and pull the changes. 
 
-## SLURM
+## SLURM TIME!
 
-Now, when everything is settled, it is time for a game! Before redacting the slurm script, please check if it includes *matplotlib.use("Agg")*, as otherwise it will throw an error! Also check if includes the right path to the directories, so that all the figures are stored in */scratch/gene/horizontal_gene_transfer/Mesocentre/Figures*. 
+Now, when everything is settled, it is time for a game! Before redacting the slurm script, please check if your Python code includes *matplotlib.use("Agg")*, as otherwise it will throw an error when calling a matplolib! Also check if includes the right path to the directories, so that all the figures are stored in */scratch/gene/horizontal_gene_transfer/Mesocentre/Figures*. 
 
 Finally, change the last command in *slurmjob.sh*. It must include a path to your script. You have to do that with vim (yes-yes!). Check the short tutorial in links to this page. Or, if you feel like it, you can write your own script inside a GitHub folder, copypasting the content of the one in */scratch/gene/*, or the one from the tutorial on Aix-Marseille University website (which is equivalent), and push your changes to the folder, and launch it. 
 
@@ -44,10 +44,17 @@ You can do it and see how it works with the following commands:
 
 If everything is fine, you will see your job ID in queue (second command), and two new files in folder *logs* with extension *.out* and *.err*. The last must be empty, if everything is fine. If you don't see any jobs after the second command - check the error file. The job has either finished, or failed to launch because, for example, a mistake in your code. 
 
-To stop the job:
+You can also observe how your job is going (if, for example, you print a message every 100-th iteration) by printing the changes in the log file in your console, for that you may use:
+```shell
+[gene@login01 gene]$ tail -f logs/your_log_file.out
+```
+**Tips&Tricks:** If you think that your code is not writing anything, while it should, be sure to add an additional argument **flush=True** in your Python's **print** command. 
+
+To stop the job and to disconnect from mesocentre (you are not required to cancel the job upon disconnecting, of course):
 
 ```shell
 [gene@login01 gene]$ scancel ID_OF_THE_JOB
+[gene@login01 gene]$ exit
 ```
 
 To see the preliminary results (for example, some messages which you usually print terminal, check the folder *logs*, it contains the files with an extension *.out*, where you can see the text output of your code. 
