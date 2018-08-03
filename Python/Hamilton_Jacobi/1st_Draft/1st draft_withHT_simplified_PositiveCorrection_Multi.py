@@ -14,7 +14,7 @@ from itertools import compress
 
 #Parameters
 parameters_HJ = dict(T_max = 3, # maximal time 
-                dT = 1/10000, # Discretization time 
+                dT = 1/100, # Discretization time 
                 C=0.5, # carrying capacity of the system
                 rho0 = 1000,    # Initial number of population
                 sigma0=1,  #Initial standard variation of the population
@@ -65,9 +65,9 @@ u= np.empty((nT,nX),dtype=float)
 
 
 param='tau'
-param_m=0
-param_M=101
-param_step=10
+param_m=1
+param_M=2
+param_step=1
 J=np.arange(param_m,param_M,param_step)
 for j in J:
     u[0]=u0[0]
@@ -75,9 +75,7 @@ for j in J:
     print(' !!!!!!!!!!!!!! '+str(param)+' = '+str(j))
         
     #DEATH:
-    def death (x):
-        return parameters_HJ['d_r']*x**parameters_HJ['d_e']
-    Death= (np.vectorize(death,otypes=[np.float64]))(X)
+    Death= parameters_HJ['d_r']*X**parameters_HJ['d_e']
     
     
     
@@ -94,11 +92,9 @@ for j in J:
     
     
     #HORIZONTAL TRANSFER:
-    def tau_kernel(x,y):
-        return (np.arctan(x-y)-np.arctan(y-x))*parameters_HJ['tau']
-    def HT_term(y):
-        return np.vectorize(lambda x: tau_kernel(x,y), otypes=[np.float64])(X)
-    
+    def HT(y):
+        return (np.arctan(X-y)-np.arctan(y-X))*parameters_HJ['tau']
+
     
         
     
@@ -110,7 +106,7 @@ for j in J:
         grad_u= (u[1:]-u[:-1])/parameters_HJ['dX']
         grad_u=np.insert(grad_u,0,grad_u[0])
         x_M=i_to_x_HJ(np.argmax(u))
-        u_add=Birth-Death+parameters_HJ['sigma']**2/2*np.dot(grad_u,grad_u)+HT_term(x_M)
+        u_add=Birth-Death+parameters_HJ['sigma']**2/2*np.dot(grad_u,grad_u)+HT(x_M)
         u_new= u+u_add*parameters_HJ['dT']
         M=np.max(u_new)
         return np.maximum(u_new-max(0,M), parameters_HJ['u_inf']),M
