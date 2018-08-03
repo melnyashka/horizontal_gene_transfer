@@ -60,7 +60,7 @@ def build_and_save(Abs, Ord, XT, parameters, path): # function for creating and 
 
 print("Hello")
 
-parameters = dict(T_max = 300, # maximal time 
+parameters = dict(T_max = 2000, # maximal time 
                   dT = 0.1, # Discretization time 
                   K = 10000, # Maximal capacity of the system
                   N0 = 10000,    # Initial number of population
