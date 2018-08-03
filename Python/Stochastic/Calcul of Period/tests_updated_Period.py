@@ -1,8 +1,8 @@
 # import stochastic_continuous # Check if it works on your machine! 
 parameters = dict(T_max = 5000, # maximal time 
                 dT = 0.1, # Discretization time 
-                K = 1000, # Maximal capacity of the system
-                N0 = 1000,    # Initial number of population
+                K = 10000, # Maximal capacity of the system
+                N0 = 10000,    # Initial number of population
                 sigma0=0.1,  #Initial standard variation of the population
                 x_mean0=0.,
                 C = 0.5,    # competition
@@ -31,7 +31,7 @@ Ord_mean=[]
 Abs_tot=[]#Save the total size of the population
 Ord_tot=[]
 for i in range(int(parameters['T_max']/parameters['dT']-1)):
-    if i%5000==0:
+    if i%1000==0:
         print('T= '+str(i*parameters['dT']))
     for x in X:
         Abs.append(i*parameters['dT'])

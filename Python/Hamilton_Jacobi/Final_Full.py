@@ -72,23 +72,17 @@ Death= parameters_HJ['d_r']*X**parameters_HJ['d_e']
 
 #BIRTH:
     
-Birth=parameters_HJ['b_r']    
-    
-#def birth_kernel(p,z):
-#    return np.exp(-(z/parameters_HJ['sigma'])**2+p*z)*parameters_HJ['b_r']
-#def birth_term(p):
-#    return np.sum(np.vectorize(lambda x: birth_kernel(p,x),otypes=[np.float64])(X))*parameters_HJ['dX']
-#
-#Birth= np.vectorize(birth_term,otypes=[np.float64])
-#
+#Birth=parameters_HJ['b_r']    
+ 
 
-#def birth_plus (p):#p is the gradient for positive z 
-#    return np.sum(parameters_HJ['b_r']*parameters['dX']*np.exp(np.multiply(Xplus,p-Xplus/(2*parameters['sigma']**2))))
-#Birth_plus=np.vectorize(birth_plus, otypes=[np.float64])
-#
-#def birth_minus (p):#and here p is for negative z
-#    return np.sum(parameters_HJ['b_r']*parameters['dX']*np.exp(np.multiply(Xminus,p-Xminus/(2*parameters['sigma']**2))))
-#Birth_minus=np.vectorize(birth_plus, otypes=[np.float64])
+
+def birth_plus (p):#p is the gradient for positive z 
+    return np.sum(parameters_HJ['b_r']*parameters['dX']*np.exp(np.multiply(Xplus,p-Xplus/(2*parameters['sigma']**2))))
+Birth_plus=np.vectorize(birth_plus, otypes=[np.float64])
+
+def birth_minus (p):#and here p is for negative z
+    return np.sum(parameters_HJ['b_r']*parameters['dX']*np.exp(np.multiply(Xminus,p-Xminus/(2*parameters['sigma']**2))))
+Birth_minus=np.vectorize(birth_plus, otypes=[np.float64])
 
 
 
@@ -105,10 +99,10 @@ def HT(y):
 #Evolution Operator
 def Next_time_HJ(u,parameters_HJ):
     grad_u= (u[1:]-u[:-1])/parameters_HJ['dX']
-    grad2_u=np.power(grad_u,2)
-    grad2_u=np.maximum(np.insert(grad2_u,0,grad2_u[0]),np.append(grad2_u,grad2_u[-1]))
+    grad_u_plus=np.insert(grad_u,0,grad_u[0])
+    grad_u_minus=np.append(grad_u,grad_u[-1])
     x_M=i_to_x_HJ(np.argmax(u))
-    u_add=Birth-Death+(parameters_HJ['sigma']**2/2)*grad2_u+HT(x_M)
+    u_add=-Death+Birth_plus(grad_u_plus)+Birth_minus(grad_u_minus)+HT(x_M)
     u_new= u+u_add*parameters_HJ['dT']
     M=np.max(u_new)
     return u_new-max(0,M),M
@@ -170,7 +164,7 @@ plt.tight_layout()
 
 
 current_time = datetime.now().time()
-figure.savefig(str("Figures/Simplified/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
+figure.savefig(str("Figures/Full/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
 
 
 
