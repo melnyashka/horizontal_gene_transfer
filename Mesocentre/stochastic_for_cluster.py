@@ -70,7 +70,7 @@ parameters = dict(T_max = 2000, # maximal time
                 mu = 1,
                 b_r = 1,     # birth rate
                 d_r = 1,      # death rate
-                C = 0.4,    # competition
+                C = 0.5,    # competition
                 sigma = 0.01, # mutation variance
                 tau = 0.1,  # transfer rate
                 x_mean = 1
