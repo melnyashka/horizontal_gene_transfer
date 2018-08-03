@@ -13,22 +13,22 @@ from itertools import compress
 
 
 #Parameters
-parameters_HJ = dict(T_max = 5, # maximal time 
-                dT = 1/100, # Discretization time 
+parameters_HJ = dict(T_max = 100, # maximal time 
+                dT = 1/2000, # Discretization time 
                 C=0.5, # carrying capacity of the system
                 rho0 = 1000,    # Initial number of population
-                sigma0=1,  #Initial standard variation of the population
+                sigma0=0.1,  #Initial standard variation of the population
                 x0=0.,
                 b_r = 1,     # birth rate
                 d_r = 1,      # death rate
                 d_e=2,      #exponent for the death function
                 beta = 0, 
                 mu = 1,
-                sigma = 1,
-                tau = 0., # transfer rate
-                X_min=-3,
-                X_max=3,
-                dX=1/100, #discretization of space trait
+                sigma = 0.01,
+                tau = 1., # transfer rate
+                X_min=-5,
+                X_max=5,
+                dX=1/30, #discretization of space trait
                 u_inf=-5000
                 )
 
@@ -57,7 +57,7 @@ def i_to_x_HJ (i):
 
 
 #INITIAL TIME
-u0=np.fromiter((-1/2*((x-parameters_HJ['x0'])/parameters_HJ['sigma0'])**2 for x in X),dtype=float)
+u0=np.fromiter((-1/2*((x-parameters_HJ['x0'])/parameters_HJ['sigma0'])**2/(1+x**2) for x in X),dtype=float)
 u= np.empty((nT,nX),dtype=float)
 u[0]=u0
 
@@ -106,9 +106,9 @@ def HT(y):
 def Next_time_HJ(u,parameters_HJ):
     grad_u= (u[1:]-u[:-1])/parameters_HJ['dX']
     grad2_u=np.power(grad_u,2)
-    grad2_u=(np.insert(grad2_u,0,2*grad2_u[0]-grad2_u[1])+np.append(grad2_u,2*grad2_u[-1]-grad2_u[-2]))/2
+    grad2_u=(np.insert(grad2_u,0,grad2_u[0])+np.append(grad2_u,grad2_u[-1]))/2
     x_M=i_to_x_HJ(np.argmax(u))
-    u_add=Birth-Death+(parameters_HJ['sigma']**2/2)+HT(x_M)
+    u_add=Birth-Death+(parameters_HJ['sigma']**2/2)*grad2_u+HT(x_M)
     u_new= u+u_add*parameters_HJ['dT']
     M=np.max(u_new)
     return u_new-max(0,M),M
