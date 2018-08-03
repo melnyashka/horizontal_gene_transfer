@@ -3,16 +3,16 @@
 No worries, my friend, here is a simple instruction! 
 
 First, connect to the cluster by typing the following command in your terminal:
-'''shell
+```shell
 [yggdrasil@sowelu ~]$ ssh gene@login.mesocentre.univ-amu.fr
-'''
+```
 
 Type the password if prompted. Done, now you are inside a shell! Now you will have to change your working directory to the one where all our files are stored. 
 
-'''shell
+```shell
 [gene@login01 ~]$ cd /scratch/gene/
 [gene@login01 gene]$ ls
-'''
+```
 
 Now you can see all the folders containing in our working directory! Cool, no? 
 
@@ -36,20 +36,20 @@ Finally, change the last command in *slurmjob.sh*. It must include a path to you
 
 You can do it and see how it works with the following commands:
 
-'''shell
+```shell
 [gene@login01 gene]$ sbatch ./slurmjob.sh
 [gene@login01 gene]$ squeue -u gene
 [gene@login01 gene]$ ls -il logs/
-'''
+```
 
 If everything is fine, you will see your job ID in queue (second command), and two new files in folder *logs* with extension *.out* and *.err*. The last must be empty, if everything is fine. If you don't see any jobs after the second command - check the error file. The job has either finished, or failed to launch because, for example, a mistake in your code. 
 
 To stop the job:
 
-'''shell
+```shell
 [gene@login01 gene]$ scancel ID_OF_THE_JOB
+```
 
-'''
 To see the preliminary results (for example, some messages which you usually print terminal, check the folder *logs*, it contains the files with an extension *.out*, where you can see the text output of your code. 
 
 Now, when you got what you want (for example, new figures, or some new data, or whatever), push your changes to the server using *git* command inside a *horizontal_gene_transfer* folder (as usual). 
