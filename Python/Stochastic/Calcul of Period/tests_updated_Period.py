@@ -1,8 +1,8 @@
 # import stochastic_continuous # Check if it works on your machine! 
-parameters = dict(T_max = 5000, # maximal time 
+parameters = dict(T_max = 2000, # maximal time 
                 dT = 0.1, # Discretization time 
-                K = 10000, # Maximal capacity of the system
-                N0 = 10000,    # Initial number of population
+                K = 1000, # Maximal capacity of the system
+                N0 = 1000,    # Initial number of population
                 sigma0=0.1,  #Initial standard variation of the population
                 x_mean0=0.,
                 C = 0.5,    # competition

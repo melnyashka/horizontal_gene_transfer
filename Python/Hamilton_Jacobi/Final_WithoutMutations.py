@@ -13,7 +13,7 @@ from itertools import compress
 
 
 #Parameters
-parameters_HJ = dict(T_max = 1000, # maximal time 
+parameters_HJ = dict(T_max = 2000, # maximal time 
                 dT = 1/100, # Discretization time 
                 C=0.5, # carrying capacity of the system
                 rho0 = 1000,    # Initial number of population
@@ -25,7 +25,7 @@ parameters_HJ = dict(T_max = 1000, # maximal time
                 beta = 0, 
                 mu = 1,
                 sigma = 0.01,
-                tau = 1.06, # transfer rate
+                tau = 0.5, # transfer rate
                 X_min=-5,
                 X_max=5,
                 dX=1/30, #discretization of space trait
@@ -78,7 +78,7 @@ Birth=parameters_HJ['b_r']
 
 #HORIZONTAL TRANSFER:
 def HT(y):
-    return (np.arctan(X-y)-np.arctan(y-X))*parameters_HJ['tau']
+    return (np.heaviside(X-y,0)-np.heaviside(y-X,0))*parameters_HJ['tau']
 
 
     

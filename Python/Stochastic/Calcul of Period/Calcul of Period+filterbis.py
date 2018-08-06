@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 #t_plot=int(1000/parameters['dT'])
 #T_plot=int(2000/parameters['dT'])
 
-t_calculus=int(2000/parameters['dT'])
+t_calculus=int(20/parameters['dT'])
 T_calculus=int(parameters['T_max']/parameters['dT'])
 
 
@@ -84,8 +84,8 @@ b, a = signal.butter(3, band, btype=typefilter, analog=False)
 
 
 Mean_trait=Ord_mean[t_calculus:T_calculus]
-#Mean_trait=Mean_trait-Mean_trait.mean()
-Mean_trait=signal.filtfilt(b, a, Mean_trait)
+Mean_trait=Mean_trait-Mean_trait.mean()
+#Mean_trait=signal.filtfilt(b, a, Mean_trait)
 
 
 #plt.subplot(3, 2, 5)
@@ -93,11 +93,11 @@ plt.plot(Abs_mean[t_calculus:T_calculus],Mean_trait)
 #plt.title('mean trait')
 
 
-#Fourier_trait=np.fft.rfft(Mean_trait)
-#freq_trait=np.fft.rfftfreq(Mean_trait.shape[-1])
+Fourier_trait=np.fft.rfft(Mean_trait)
+freq_trait=np.fft.rfftfreq(Mean_trait.shape[-1])
 #
 #plt.subplot(3, 2, 6)
-#plt.plot(freq_trait,Fourier_trait)
+plt.plot(freq_trait,Fourier_trait)
 #plt.title('Fourier transform of the mean trait')
 #
 
