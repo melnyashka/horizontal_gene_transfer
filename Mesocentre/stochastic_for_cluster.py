@@ -77,7 +77,7 @@ parameters = dict(T_max = 2000, # maximal time
                 )
 
 # Let us check the next taus:
-tau_i = np.arange(0.05,1.,0.05)
+tau_i = np.arange(0.2,1.,0.05)
 
 # Now we have to create a grid:
 def create_grid(parameters):
