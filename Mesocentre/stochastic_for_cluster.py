@@ -41,7 +41,7 @@ def discretize(x, Ord):
     x_discret = np.vectorize(lambda i: ((Ord[i]<x)&(x<Ord[i+1])).sum())(range(len(Ord) - 1))
     return x_discret
 
-def build_and_save(Abs, Ord, XT, mean_x, len_x, parameters, path): # function for creating and saving plots
+def build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path): # function for creating and saving plots
     par_str = '' # create a string of parameters to pass into plots
     for k, v in parameters.items():
         if k == 'N0' or k == 'b_r': 
@@ -79,7 +79,7 @@ def build_and_save(Abs, Ord, XT, mean_x, len_x, parameters, path): # function fo
 
 print("Hello")
 
-parameters = dict(T_max = 2000, # maximal time 
+parameters = dict(T_max = 1000, # maximal time 
                   dT = 0.1, # Discretization time 
                   K = 10000, # Maximal capacity of the system
                   N0 = 10000,    # Initial number of population
@@ -96,10 +96,10 @@ parameters = dict(T_max = 2000, # maximal time
                 )
 
 # Let us check the next taus:
-tau_i = np.arange(0.2,1.,0.05)
+tau_i = np.arange(0.2,0.55,0.025)
 
 for i in range(len(tau_i)):
-    print(str(i) + " and " + str(tau_i[i]), flush = True)
+    print(str(i) + " and " + str(round(tau_i[i],3), flush = True)
     parameters['tau'] = tau_i[i]
     X0 = np.random.normal(parameters["x_mean"], parameters['sigma0'], parameters['N0']) # Initial population
     # X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
