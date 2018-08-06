@@ -99,13 +99,13 @@ parameters = dict(T_max = 1000, # maximal time
 tau_i = np.arange(0.2,0.55,0.025)
 
 for i in range(len(tau_i)):
-    print(str(i) + " and " + str(round(tau_i[i],3), flush = True)
+    print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
     parameters['tau'] = tau_i[i]
     X0 = np.random.normal(parameters["x_mean"], parameters['sigma0'], parameters['N0']) # Initial population
     # X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
     X = np.sort(X0)
-    len_x, mean_x = np.empty([len(Abs)]), np.empty([len(Abs)])
     Abs, Ord = create_grid(parameters)
+    len_x, mean_x = np.empty([len(Abs)]), np.empty([len(Abs)])
     XT = np.empty([len(Abs), len(Ord)-1])
     for i in range(int(parameters['T_max']/parameters['dT']-1)):
         start_time = time()
