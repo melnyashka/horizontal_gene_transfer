@@ -8,8 +8,8 @@ from pylab import meshgrid,cm,imshow,contour,clabel,colorbar,axis,title,show
 from matplotlib import cm
 
 #PARAMETERS !!!!!!!!!!!!!!!!!!!!!!!!
-parameters = dict(T_max = 3, # maximal time 
-                  dT = 0.0001, # Discretization time 
+parameters = dict(T_max = 100, # maximal time 
+                  dT = 0.01, # Discretization time 
                   sigma0 = 0.01,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -19,12 +19,12 @@ parameters = dict(T_max = 3, # maximal time
                   d_e = 2,   #exponetial power
                   beta = 0, 
                   mu = 1,
-                  sigma = 1,
-                  tau = 1.,  # transfer rate
+                  sigma = 0.01,
+                  tau = 0.3,  # transfer rate
                   X_min = -0.2, #length of the numerical interval of traits (for PDE!)
                   X_max=1.5,
                   dX = 0.01, #discretization of the space of traits
-                  eps = 0.01
+                  eps = 1
                   )
 dX, T_max, dT = parameters['dX'], parameters['T_max'], parameters['dT']
 X_min, X_max= parameters['X_min'], parameters['X_max']
@@ -57,9 +57,9 @@ f[0]=f0
 
 #LOOP OVER PARAMETERS !!!!!!!!!!!!!!!!!!!
 param='tau'
-param_m=1
-param_M=2
-param_step=0.1
+param_m=0
+param_M=1
+param_step=0.01
 J=np.arange(param_m,param_M,param_step)
 for j in J:
     f[0]=f0
