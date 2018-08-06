@@ -9,7 +9,7 @@ from matplotlib import cm
 
 #PARAMETERS !!!!!!!!!!!!!!!!!!!!!!!!
 parameters = dict(T_max = 50, # maximal time 
-                  dT = 0.005, # Discretization time 
+                  dT = 0.001, # Discretization time 
                   sigma0 = 0.01,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -23,7 +23,7 @@ parameters = dict(T_max = 50, # maximal time
                   tau = 1.,  # transfer rate
                   X_min = -0.2, #length of the numerical interval of traits (for PDE!)
                   X_max=1.5,
-                  dX = 0.05, #discretization of the space of traits
+                  dX = 0.01, #discretization of the space of traits
                   eps = 0.1
                   )
 dX, T_max, dT = parameters['dX'], parameters['T_max'], parameters['dT']
@@ -57,9 +57,9 @@ f[0]=f0
 
 #LOOP OVER PARAMETERS !!!!!!!!!!!!!!!!!!!
 param='tau'
-param_m=0
-param_M=10
-param_step=1
+param_m=10
+param_M=101
+param_step=10
 J=np.arange(param_m,param_M,param_step)
 for j in J:
     f[0]=f0
