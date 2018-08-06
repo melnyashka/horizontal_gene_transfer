@@ -124,7 +124,7 @@ for j in J:
     #clabel(cset,inline=True,fmt='%1.1f',fontsize=10)
     
     current_time = datetime.now().time()
-    figure.savefig(str("Figures/plot_PDE" + str(current_time)[0:8]+".pdf")) # Possibly different delimeter on Linux and Windows!
+    figure.savefig(str("/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/plot_PDE" + str(current_time)[0:8]+".pdf")) # Possibly different delimeter on Linux and Windows!
     gc.collect()
 
 
