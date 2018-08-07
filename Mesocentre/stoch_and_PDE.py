@@ -166,7 +166,7 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
 if __name__ == "__main__":
 
     parameters = dict(T_max = 1000, # maximal time 
-                      dT = 0.001, # Discretization time 
+                      dT = 0.01, # Discretization time 
                       sigma0 = 0.01,  #Initial standard variation of the population
                       x_mean0 = 0.,
                       K = 10000, # Maximal capacity of the system
