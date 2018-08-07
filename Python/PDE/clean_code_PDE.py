@@ -1,19 +1,9 @@
 
-# coding: utf-8
-
-# In[12]:
-
-
-# %load 'horizontal_gene_transfer/Mesocentre/PDE_Full.py'
-import matplotlib 
 # matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import gc 
 from datetime import datetime
-
-from pylab import meshgrid,cm,imshow,contour,clabel,colorbar,axis,title,show
-from matplotlib import cm
 
 def Pre_Initialization_PDE(parameters):
     dX, T_max, dT = parameters['dX'], parameters['T_max'], parameters['dT']
@@ -58,8 +48,6 @@ def Next_Generation_PDE(f,parameters, pre_init_values):
     I=range(pre_init_values['nX'])    # all the indexes
     
     rho = np.sum(f)*parameters['dX'] # I don't like the idea of comparing float with an integer, but okay
-    if rho==0:
-        return 0
     
     death_term = Death + rho*parameters['C']
     birth_part = np.convolve(Mutation_kernel,f)[X_min_new:X_max_new]
@@ -68,46 +56,80 @@ def Next_Generation_PDE(f,parameters, pre_init_values):
     new_f = f + dT/parameters['eps']*(np.multiply(f,(-death_term + transfer_part))+birth_part)
     return new_f
 
+def build_and_save_PDE(f, parameters, pre_init_values, path):
+    par_str = '' # create a string of parameters to pass into pots
+    for k,v in parameters.items():
+        if k == 'N0' or k=='b_r':
+            smth =",\n"
+        else:
+            smth=", "
+        par_str+=k+"="+str(v)+smth
+    # Now we have to compute the mean trait and the population size at each time! 
+    X, nT = pre_init_values['X'], pre_init_values['nT']
+    sum_f = np.sum(f, axis = 1)
+    computed_mean = np.divide(np.sum(X*f, axis = 1), sum_f)
+    figure = plt.figure()
+    plt.suptitle(par_str, y = 1.1)
+    grid = plt.GridSpec(2,5, wspace = 0.9, hspace = 0.5)
+    fig1 = plt.subplot(grid[:,:-2])
+    fig1.imshow(f.transpose()[::-1],cmap=plt.cm.jet, aspect = 'auto', extent = (0,parameters['T_max'], X_min, X_max), 
+            vmin = 0, vmax = 1)
+    fig1.set_xlabel('time')
+    fig1.set_ylabel('trait')
+    fig1.set_title('Population dynamics')
+    fig2 = plt.subplot(grid[0,3:])
+    plt.plot(np.arange(nT)/parameters['dT'], sum_f)
+    fig2.set_title("Population size")
+    fig3 = plt.subplot(grid[1,3:])
+    plt.plot(np.arange(nT)/parameters['dT'], computed_mean)
+    fig3.set_title("Mean trait")
+    current_time = datetime.now().time()
+    figure.savefig(str(path +"plot_"+str(current_time)[0:8]+".pdf"), bbox_inches ='tight')
+    plt.show()
+    # plt.close()
+
 #######################################    
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 100, # maximal time 
-                  dT = 0.001, # Discretization time 
-                  sigma0 = 0.01,  #Initial standard variation of the population
-                  x_mean0 = 0.,
-                  C = 0.5,    # competition
-#                 p = 0.03,      # Probability of mutation
-                  b_r = 1,     # birth rate
-                  d_r = 1,      # death rate
-                  d_e = 2,   #exponetial power
-                  beta = 0, 
-                  mu = 1,
-                  sigma = 0.01,
-                  tau = 0.3,  # transfer rate
-                  X_min = -0.2, #length of the numerical interval of traits (for PDE!)
-                  X_max=1.5,
-                  dX = 0.01, #discretization of the space of traits
-                  eps = 1
-                  )
-    
-# Loop over given parameters
-param='tau' # here we check the value
-param_m=0.2
-param_M=0.55
-param_step=25
-J=np.arange(param_m,param_M,param_step)
-for j in J:
-    pre_init_values = Pre_Initialization_PDE(parameters) 
-    f, nT = pre_init_values['f'], pre_init_values['nT']
-    parameters[param]=j
-    print(' !!!!!!!!!!!!!! '+str(param)+' = '+str(j), flush = True)    
-    gc.collect()
-    #SIMULATION !!!!!!!!!!!!!!!!!!
-    for i in range(nT-1):
-        f[i+1] = Next_Generation_PDE(f[i],parameters, pre_init_values)
-        if i%1000==0:
-            print('T= '+str(i*parameters['dT']), flush = True)
+if __name__ == "__main__":
+
+    parameters = dict(T_max = 100, # maximal time 
+                      dT = 0.001, # Discretization time 
+                      sigma0 = 0.01,  #Initial standard variation of the population
+                      x_mean0 = 0.,
+                      C = 0.5,    # competition
+    #                 p = 0.03,      # Probability of mutation
+                      b_r = 1,     # birth rate
+                      d_r = 1,      # death rate
+                      d_e = 2,   #exponetial power
+                      beta = 0, 
+                      mu = 1,
+                      sigma = 0.01,
+                      tau = 0.3,  # transfer rate
+                      X_min = -0.2, #length of the numerical interval of traits (for PDE!)
+                      X_max=1.5,
+                      dX = 0.01, #discretization of the space of traits
+                      eps = 1
+                      )
+        
+    # Loop over given parameters
+    param='tau' # here we check the value
+    param_m=0.2
+    param_M=0.55
+    param_step=25
+    J=np.arange(param_m,param_M,param_step)
+    for j in J:
+        pre_init_values = Pre_Initialization_PDE(parameters) 
+        f, nT = pre_init_values['f'], pre_init_values['nT']
+        parameters[param]=j
+        print(' !!!!!!!!!!!!!! '+str(param)+' = '+str(j), flush = True)    
+        gc.collect()
+        #SIMULATION !!!!!!!!!!!!!!!!!!
+        for i in range(nT-1):
+            f[i+1] = Next_Generation_PDE(f[i],parameters, pre_init_values)
+            if i%1000==0:
+                print('T= '+str(i*parameters['dT']), flush = True)
 
             
 

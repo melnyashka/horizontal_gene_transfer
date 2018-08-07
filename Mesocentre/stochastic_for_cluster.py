@@ -77,45 +77,45 @@ def build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path): # function fo
 ###                  Executable part 
 ########################################################################################
 
-print("Hello")
+if __name__ == "__main__":
 
-parameters = dict(T_max = 1000, # maximal time 
-                  dT = 0.1, # Discretization time 
-                  K = 10000, # Maximal capacity of the system
-                  N0 = 10000,    # Initial number of population
-                 sigma0=0.1,  #Initial standard variation of the population
-                 beta = 0, 
-                 d_e = 2,
-                mu = 1,
-                b_r = 1,     # birth rate
-                d_r = 1,      # death rate
-                C = 0.5,    # competition
-                sigma = 0.01, # mutation variance
-                tau = 0.1,  # transfer rate
-                x_mean = 1
-                )
+    parameters = dict(T_max = 1000, # maximal time 
+                      dT = 0.1, # Discretization time 
+                      K = 10000, # Maximal capacity of the system
+                      N0 = 10000,    # Initial number of population
+                     sigma0=0.1,  #Initial standard variation of the population
+                     beta = 0, 
+                     d_e = 2,
+                    mu = 1,
+                    b_r = 1,     # birth rate
+                    d_r = 1,      # death rate
+                    C = 0.5,    # competition
+                    sigma = 0.01, # mutation variance
+                    tau = 0.1,  # transfer rate
+                    x_mean = 1
+                    )
 
-# Let us check the next taus:
-tau_i = np.arange(0.2,0.55,0.025)
+    # Let us check the next taus:
+    tau_i = np.arange(0.2,0.55,0.025)
 
-for i in range(len(tau_i)):
-    print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
-    parameters['tau'] = tau_i[i]
-    X0 = np.random.normal(parameters["x_mean"], parameters['sigma0'], parameters['N0']) # Initial population
-    # X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
-    X = np.sort(X0)
-    Abs, Ord = create_grid(parameters)
-    len_x, mean_x = np.empty([len(Abs)]), np.empty([len(Abs)])
-    XT = np.empty([len(Abs), len(Ord)-1])
-    for i in range(int(parameters['T_max']/parameters['dT']-1)):
-        start_time = time()
-        XT[i] = discretize(X, Ord)
-        len_x[i], mean_x[i] = len(X), np.mean(X)
-        X=Next_Generation(X, parameters)
-        if i%100 == 0: print("That is our "+str(i)+ "-th iteration, it lasted "+str(round(time()-start_time, 3))+"s", flush = True)
-    gc.collect()
-    build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/") 
- 
+    for i in range(len(tau_i)):
+        print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
+        parameters['tau'] = tau_i[i]
+        X0 = np.random.normal(parameters["x_mean"], parameters['sigma0'], parameters['N0']) # Initial population
+        # X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
+        X = np.sort(X0)
+        Abs, Ord = create_grid(parameters)
+        len_x, mean_x = np.empty([len(Abs)]), np.empty([len(Abs)])
+        XT = np.empty([len(Abs), len(Ord)-1])
+        for i in range(int(parameters['T_max']/parameters['dT']-1)):
+            start_time = time()
+            XT[i] = discretize(X, Ord)
+            len_x[i], mean_x[i] = len(X), np.mean(X)
+            X=Next_Generation(X, parameters)
+            if i%100 == 0: print("That is our "+str(i)+ "-th iteration, it lasted "+str(round(time()-start_time, 3))+"s", flush = True)
+        gc.collect()
+        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/") 
+     
     
 
     
