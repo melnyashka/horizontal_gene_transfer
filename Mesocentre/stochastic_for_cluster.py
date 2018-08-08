@@ -34,7 +34,7 @@ def Next_Generation(x, parameters):
 def create_grid(parameters):
     T_max, dT, x_mean, sigma0 = parameters["T_max"], parameters["dT"], parameters["x_mean"], parameters["sigma0"]
     Abs = np.arange(0, T_max, dT)
-    Ord = np.arange(-1 - x_mean - 5*sigma0, x_mean + 5*sigma0, 0.0001) # here we make a static grid within given limits with the given accuracy (the last number of the function). We need it in order to count the number of elements fitting in the grid, and plot the obtained "discretized" population
+    Ord = np.arange(-1 - x_mean - 5*sigma0, x_mean + 5*sigma0, 0.001) # here we make a static grid within given limits with the given accuracy (the last number of the function). We need it in order to count the number of elements fitting in the grid, and plot the obtained "discretized" population
     return Abs, Ord
 
 def discretize(x, Ord):
@@ -79,7 +79,7 @@ def build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path): # function fo
 
 if __name__ == "__main__":
 
-    parameters = dict(T_max = 1000, # maximal time 
+    parameters = dict(T_max = 300, # maximal time 
                       dT = 0.1, # Discretization time 
                       K = 10000, # Maximal capacity of the system
                       N0 = 10000,    # Initial number of population
@@ -96,7 +96,7 @@ if __name__ == "__main__":
                     )
 
     # Let us check the next taus:
-    tau_i = np.arange(0.2,0.55,0.025)
+    tau_i = np.arange(0.48,0.52,0.005)
 
     for i in range(len(tau_i)):
         print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
@@ -114,7 +114,7 @@ if __name__ == "__main__":
             X=Next_Generation(X, parameters)
             if i%100 == 0: print("That is our "+str(i)+ "-th iteration, it lasted "+str(round(time()-start_time, 3))+"s", flush = True)
         gc.collect()
-        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/") 
+        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/crittau/") 
      
     
 

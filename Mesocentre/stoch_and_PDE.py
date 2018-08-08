@@ -34,7 +34,7 @@ def Next_Generation(x, parameters):
 def create_grid(parameters):
     T_max, dT, x_mean, sigma0 = parameters["T_max"], parameters["dT"], parameters["x_mean0"], parameters["sigma0"]
     Abs = np.arange(0, T_max, dT)
-    Ord = np.arange(-1 - x_mean - 1.5, x_mean + 1.5, 0.0001) # here we make a static grid within given limits with the given accuracy (the last number of the function). We need it in order to count the number of elements fitting in the grid, and plot the obtained "discretized" population
+    Ord = np.arange(x_mean - 1.5, x_mean + 1.5, 0.001) # here we make a static grid within given limits with the given accuracy (the last number of the function). We need it in order to count the number of elements fitting in the grid, and plot the obtained "discretized" population
     return Abs, Ord
 
 def discretize(x, Ord):
@@ -197,7 +197,7 @@ if __name__ == "__main__":
         Abs, Ord = create_grid(parameters)
         len_x, mean_x = np.empty([len(Abs)]), np.empty([len(Abs)])
         XT = np.empty([len(Abs), len(Ord)-1])
-        for i in range(int(parameters['T_max']/parameters['dT']-1)):
+        for i in range(nT-1):
             start_time = time()
             XT[i], len_x[i], mean_x[i] = discretize(X, Ord), len(X)/parameters['K'], np.mean(X)
             X = Next_Generation(X, parameters)
