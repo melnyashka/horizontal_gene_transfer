@@ -11,7 +11,7 @@ def horizontal_transfer(x, tau, beta, mu):
     # x = x.sort()
     n_tot = len(x)
     ht_rate = tau/(beta+mu*n_tot)
-    return list(map(lambda i: ht_rate*(n_tot-i), range(n_tot)))
+    return np.vectorize(lambda i: ht_rate*(n_tot-i))(range(n_tot))
     
 def Next_Generation(x, parameters):
     b_r, d_r, C, K, sigma, d_e = parameters['b_r'], parameters['d_r'], parameters['C'], parameters['K'], parameters['sigma'],parameters['d_e']
