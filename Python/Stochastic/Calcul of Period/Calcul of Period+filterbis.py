@@ -3,9 +3,6 @@
 import matplotlib.pyplot as plt
 
 
-
-
-
 ##WHOLE GRAPH
 #t_plot=int(1000/parameters['dT'])
 #T_plot=int(2000/parameters['dT'])
@@ -28,12 +25,6 @@ for k, v in parameters.items():
 #figure = plt.figure()
 #plt.hist2d(Abs,Ord,bins=3/2*parameters['K'],cmap=plt.cm.bone_r,alpha=1,cmax=2*parameters['K'],cmin=parameters['K']/100)
 #plt.colorbar()
-
-
-
-
-
-
 
 
 #FILTERING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -59,29 +50,7 @@ else:
 #critical_f=0.0001
 b, a = signal.butter(3, band, btype=typefilter, analog=False)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #MEAN TRAIT OF THE POPULATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 Mean_trait=Ord_mean[t_calculus:T_calculus]
 Mean_trait=Mean_trait-Mean_trait.mean()
@@ -102,17 +71,10 @@ plt.plot(freq_trait,Fourier_trait)
 #
 
 
-
-
-
-
-
 #TOTAL SIZE OF THE POPULATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Pop_tot=Ord_tot[t_calculus:T_calculus]
 Pop_tot=-(Pop_tot-Pop_tot.mean())/1500+Mean_trait.mean()
 Pop_tot=signal.filtfilt(b, a, Pop_tot)
-
-
 
 #plt.subplot(3, 2, 3)
 plt.plot(Abs_tot[t_calculus:T_calculus],Pop_tot)
