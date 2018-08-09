@@ -178,7 +178,7 @@ if __name__ == "__main__":
                       d_e = 2,   #exponetial power
                       beta = 0, 
                       mu = 1,
-                      sigma = 1,
+                      sigma = 0.1,
                       tau = 0.3,  # transfer rate
                       X_min = -0.2, #length of the numerical interval of traits (for PDE!)
                       X_max=1.5,
