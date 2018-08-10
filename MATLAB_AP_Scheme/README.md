@@ -1,4 +1,5 @@
-Here is a short summarize of :
+Author: [Hélène Hivert](http://perso.ec-lyon.fr/helene.hivert/)
+Here is a short summary of the function:
 
 birth, death, tau, m (respectively) : birth rate, death rate, tau function for gene transfer, gaussian kernel (may be useless in this last version of my codes - I am not sure).
 
@@ -11,4 +12,4 @@ SchemaExplicite_f : an explicit scheme for f. Not robust when $\varepsilon\to 0$
 SchemaExplicite_u : an explicit scheme for u. The code is such that it is as robust as possible when $\varepsilon\to 0$. But it does not enjoy the AP property.
 SchemaLimite_Implicite_u : the scheme for the limit equation, with the implicit treatment of $\rho$.
 
-All the Test_... are scripts calling the corresponding function for numerical tests.
+All the Test_*... are scripts calling the corresponding function for numerical tests.
