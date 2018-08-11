@@ -71,6 +71,8 @@ def build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path): # function fo
     current_time = datetime.now().time()
     # figure.savefig(str(path +"plot_" + str(current_time)[0:8].replace(':','_')+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
     figure.savefig(str(path +"plot_" + str(current_time)[0:8]+".pdf"), bbox_inches='tight') # Possibly different delimeter on Linux and Windows!
+    np.savetxt(str(path+"mean_trait"+str(current_time)[0:8]+".txt"), mean_x, delimiter=',')
+    np.savetxt(str(path+"population_size_"+str(current_time)[0:8]+".txt"), len_x, delimiter=",") 
     plt.close() 
 
 def Pre_Initialization_PDE(parameters):
@@ -156,7 +158,9 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
     fig3.set_title("Mean trait")
     current_time = datetime.now().time()
     figure.savefig(str(path +"plot_"+str(current_time)[0:8]+".pdf"), bbox_inches ='tight')
-    # plt.show()
+    np.savetxt(str(path+"mean_trait_"+str(current_time)[0:8]+".txt"), computed_mean, delimiter = ',')
+    np.savetxt(str(path+"population_size_"+str(current_time)[0:8]+".txt"), sum_f, delimiter = ',')
+	# plt.show()
 
 
 ########################################################################################
