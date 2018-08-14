@@ -18,6 +18,7 @@ def Pre_Initialization_HJ(parameters):
        
     # u0 = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/((1+np.power(X,2))/2*(parameters['sigma0']*parameters['eps'])**2) # initial density 
     u0 = -((np.abs(X)<=1)*(np.power(X,2)/2)+(np.abs(X)>1)*(np.abs(X)-1/2))
+    #u0= -np.divide(np.power(X-parameters['x_mean0'],2),1+2*np.power(X-parameters['x_mean0'],2))/(2*parameters['sigma0']**2)
     # Helene's trick:
     # u=(abs(x)<=1).*x.^2/2+(abs(x)>1).*(abs(x)-1/2) # first we initialize u
     rho0=np.sum(np.exp(u0/parameters['eps']))*dX  # then we initialize rho
@@ -78,10 +79,10 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     u_right = right_s*(interp_grid-X_max)+u[-1]
     
     test=eps*np.abs(Yx)
-    flux = (test>=dX)*(interp_grid>=X_min)*(interp_grid<=X_max)*(u_sq-u_interp)/eps \
-    +(interp_grid<X_min)*(u_sq-u_left)/eps +(interp_grid>X_max)*(u_sq-u_right)/eps \
+    flux = (test>=dX)*((interp_grid>=X_min)*(interp_grid<=X_max)*(u_interp-u_sq)/eps \
+    +(interp_grid<X_min)*(u_left-u_sq)/eps +(interp_grid>X_max)*(u_right-u_sq)/eps) \
     + (test<dX)*(test>0)*((interp_grid>=X_min)*(interp_grid<=X_max)*\
-                          ((Yx>0)*(u_sq-u_sqm1)*Yx/dX +(Yx<0)*(u_sqp1-u_sq)*Yx/dX)+\
+                          ((Yx>0)*(u_sqm1-u_sq)*Yx/dX +(Yx<0)*(u_sq-u_sqp1)*Yx/dX)+\
                           (interp_grid<X_min)*left_s*Yx + (interp_grid>X_max)*right_s*Yx)+(test==0)*0
     
     # Write birth and transfer kernel
@@ -92,11 +93,11 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     T = transfer*np.ones([len(X),1])*fsurrhou
     T = np.sum(T,axis=0)*dX # that's the transfer term
 
-    mut_kern = np.exp(-np.power(Yx,2)/2)
-    cste=np.sum(mut_kern)*dy
+    mut_kern = np.exp(-np.power(Yx,2)/(2*parameters['sigma']**2))
+    cste=np.sum(mut_kern[:,0])*dy
     m_sq = mut_kern/cste*np.ones([len(X)])
 
-    H = parameters['b_r']*np.exp(flux - np.power(np.ones([len(X)])*Yx,2)/2)/cste*m_sq #*m(x) add a gaussian mutation kernel!
+    H = parameters['b_r']*np.exp(flux - np.power(np.ones([len(X)])*Yx,2)/2)/cste #*m_sq #*m(x) add a gaussian mutation kernel!
     H = np.sum(H,axis=0)*dy # that's the birth term
 
     A = u + dT*(pre_init_values['Death'] - H - T) # that's the birth-death-transfer term
@@ -163,7 +164,7 @@ def build_and_save_HJ(u, parameters, pre_init_values, path):
 
 parameters = dict(T_max = 10, # maximal time 
                   dT = 0.0001, # Discretization time 
-                  sigma0 = 0.01,  #Initial standard variation of the population
+                  sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
 #                 p = 0.03,      # Probability of mutation
@@ -172,12 +173,12 @@ parameters = dict(T_max = 10, # maximal time
                   d_e = 2,   #exponetial power
                   beta = 0, 
                   mu = 1,
-                  sigma = 0.,
+                  sigma = 1.,
                   tau = 0.4,  # transfer rate
                   X_min = -1, #length of the numerical interval of traits (for PDE!)
                   X_max=1,
                   dX = 0.01, #discretization of the space of traits
-                  eps = 0.001
+                  eps = 0.1
                   )
 
 pre_init_values = Pre_Initialization_HJ(parameters) 
