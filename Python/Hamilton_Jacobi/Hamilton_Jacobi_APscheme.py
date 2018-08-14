@@ -46,6 +46,7 @@ def Pre_Initialization_HJ(parameters):
         )
     return pre_init_values
 
+
 def Next_Generation_AP(u, rho, parameters, pre_init_values):
     ### That's our draft for the AP scheme
     dX, T_max, dT = parameters['dX'], parameters['T_max'], parameters['dT']
@@ -74,16 +75,20 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     left_s = (u[1]-u[0])/dX
     right_s = (u[-1]-u[-2])/dX
     u_left = left_s*(interp_grid-X_min)+u[0]
-    u_right = right_s*(interp_grid - X_max)+u[-1]
+    u_right = right_s*(interp_grid-X_max)+u[-1]
     
     test=eps*np.abs(Yx)
-    flux = (test>=dX)*(interp_grid>=X_min)*(interp_grid<=X_max)*(u_sq-u_interp)/eps     +(interp_grid<X_min)*(u_sq-u_left)/eps +(interp_grid>X_max)*(u_sq-u_right)/eps     + (test<dX)*(test>0)*((interp_grid>=X_min)*(interp_grid<=X_max)*                          ((Yx>0)*(u_sq-u_sqm1)*Yx/dX +(Yx<0)*(u_sqp1-u_sq)*Yx/dX)+                          (interp_grid<X_min)*left_s*Yx + (interp_grid>X_max)*right_s*Yx)+(test==0)*0
+    flux = (test>=dX)*(interp_grid>=X_min)*(interp_grid<=X_max)*(u_sq-u_interp)/eps \
+    +(interp_grid<X_min)*(u_sq-u_left)/eps +(interp_grid>X_max)*(u_sq-u_right)/eps \
+    + (test<dX)*(test>0)*((interp_grid>=X_min)*(interp_grid<=X_max)*\
+                          ((Yx>0)*(u_sq-u_sqm1)*Yx/dX +(Yx<0)*(u_sqp1-u_sq)*Yx/dX)+\
+                          (interp_grid<X_min)*left_s*Yx + (interp_grid>X_max)*right_s*Yx)+(test==0)*0
     
     # Write birth and transfer kernel
-    min_u = np.min(u)
+    max_u = np.max(u)
     transfer = parameters['tau']*np.vectorize(lambda y: (np.heaviside(X-y,1)-np.heaviside(y-X,1)))(y in X) # can be replaced by arctan
-    rho_u=np.sum(np.exp(-(u-min_u)/eps))*dX
-    fsurrhou=np.exp(-(u-min_u)/eps)/rho_u
+    rho_u=np.sum(np.exp((u-max_u)/eps))*dX
+    fsurrhou=np.exp((u-max_u)/eps)/rho_u
     T = transfer*np.ones([len(X),1])*fsurrhou
     T = np.sum(T,axis=0)*dX # that's the transfer term
 
@@ -95,8 +100,8 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     H = np.sum(H,axis=0)*dy # that's the birth term
 
     A = u + dT*(pre_init_values['Death'] - H - T) # that's the birth-death-transfer term
-    min_A = np.min(A)
-    C = eps*np.log(dX)- min_A+eps*np.log(np.sum(np.exp(-(A-min_A)/eps)))
+    max_A = np.max(A)
+    C = eps*np.log(dX) - max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
 
     func = lambda x: C - eps*np.log(x)-dT*x
     invd_func = lambda x: -x/(eps+dT*x)
