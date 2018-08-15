@@ -87,11 +87,21 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     
     # Write birth and transfer kernel
     max_u = np.max(u)
-    transfer = parameters['tau']*np.vectorize(lambda y: (np.heaviside(X-y,1)-np.heaviside(y-X,1)))(y in X) # can be replaced by arctan
     rho_u=np.sum(np.exp((u-max_u)/eps))*dX
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
+    
+    transfer_kernel=  parameters['tau']*(np.arctan(X/parameters['delta'])-np.arctan(-X/parameters['delta']))*dX
+    
+    X_min_new=int(-X_min/dX)#Bounds for the new indexes that must be kept after the convolution
+    X_max_new=int((-2*X_min+X_max)/dX)
+    T = np.convolve(transfer_kernel,f)[X_min_new:X_max_new]# that's the transfer term
+
+
     T = transfer*np.ones([len(X),1])*fsurrhou
     T = np.sum(T,axis=0)*dX # that's the transfer term
+    #transfer = parameters['tau']*np.vectorize(lambda y: (np.arctan((X-y)/parameters['delta'],1)-np.heaviside((y-X)/parameters['delta'],1)))(y in X) # can be replaced by arctan
+
+
 
     mut_kern = np.exp(-np.power(Yx,2)/(2*parameters['sigma']**2))
     cste=np.sum(mut_kern[:,0])*dy
@@ -178,7 +188,8 @@ parameters = dict(T_max = 3, # maximal time
                   X_min = -1, #length of the numerical interval of traits (for PDE!)
                   X_max=1,
                   dX = 0.01, #discretization of the space of traits
-                  eps = 0.1
+                  eps = 0.1,
+                  delta=0.05
                   )
 
 pre_init_values = Pre_Initialization_HJ(parameters) 
