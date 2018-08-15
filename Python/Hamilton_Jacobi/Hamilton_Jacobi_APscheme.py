@@ -16,10 +16,11 @@ def Pre_Initialization_HJ(parameters):
 
     nX = int((X_max-X_min)/dX)    #number of traits
     X = np.arange(X_min,X_max,dX) #space of traits
-       
+    
+    sigma0_eff=parameters['eps']*parameters['sigma0']**2
     # u0 = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/((1+np.power(X,2))/2*(parameters['sigma0']*parameters['eps'])**2) # initial density 
-    u0 = -((np.abs(X-parameters['x_mean0'])<=1)*(np.power(X-parameters['x_mean0'],2)/(2*parameters['sigma0']**2))
-           +(np.abs(X-parameters['x_mean0'])>1)*(np.abs(X-parameters['x_mean0'])/parameters['sigma0']**2-1/(2*parameters['sigma0']**2)))
+    u0 = -((np.abs(X-parameters['x_mean0'])<=1)*(np.power(X-parameters['x_mean0'],2)/(2*sigma0_eff))
+           +(np.abs(X-parameters['x_mean0'])>1)*(np.abs(X-parameters['x_mean0'])/sigma0_eff-1/(2*sigma0_eff)))
     #u0= -np.divide(np.power(X-parameters['x_mean0'],2),1+2*np.power(X-parameters['x_mean0'],2))/(2*parameters['sigma0']**2)
     # Helene's trick:
     # u=(abs(x)<=1).*x.^2/2+(abs(x)>1).*(abs(x)-1/2) # first we initialize u
@@ -97,7 +98,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     
     X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
     X_max_new=int((-3*X_min+X_max)/dX)
-    T = np.convolve(transfer_kernel,u)[X_min_new:X_max_new]# that's the transfer term
+    T = np.convolve(transfer_kernel,fsurrhou)[X_min_new:X_max_new]# that's the transfer term
 
 
     mut_kern = np.exp(-np.power(Yx,2)/(2*parameters['sigma']**2))
@@ -117,7 +118,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     fprime2= lambda x:eps/(x**2)
 
     # Compute rho:
-    tol=np.power(10.,-13)
+    tol=np.power(10.,-6)
     err = 10.
     i = 0
     r0 = np.sum(np.exp(u/eps))*dX # "dummy" rho
@@ -173,8 +174,8 @@ def build_and_save_HJ(u, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 10, # maximal time 
-                  dT = 0.001, # Discretization time 
+parameters = dict(T_max = 5, # maximal time 
+                  dT = 0.0005, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -182,12 +183,12 @@ parameters = dict(T_max = 10, # maximal time
                   b_r = 1,     # birth rate
                   d_r = 1,      # death rate
                   d_e = 2,   #exponetial power
-                  sigma = 0.1,
-                  tau = 0.3,  # transfer rate
-                  X_min = -2, #length of the numerical interval of traits (for PDE!)
-                  X_max=2,
-                  dX = 0.01, #discretization of the space of traits
-                  eps = 0.1,
+                  sigma = 1,
+                  tau = 0.1,  # transfer rate
+                  X_min = -4, #length of the numerical interval of traits (for PDE!)
+                  X_max=4,
+                  dX = 0.05, #discretization of the space of traits
+                  eps = 0.001,
                   delta=0.05
                   )
 

@@ -13,8 +13,8 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 
 figure = plt.figure()
-#im = imshow(u.transpose(),cmap=cm.coolwarm)
-im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters['T_max'],parameters['X_min'],parameters['X_max']))
+plt.subplot(2,1,1)
+im = imshow(U.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters['T_max'],parameters['X_min'],parameters['X_max']))
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters.items():
@@ -28,11 +28,16 @@ plt.xlabel('time')
 plt.ylabel('trait');
 
 
+
 plt.title(par_str)
+
+plt.subplot(2,1,2)
+plt.plot(Rho)
+
 plt.tight_layout()
 
 
 
-current_time = datetime.now().time()
-figure.savefig(str("Figures/APscheme/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
-
+#current_time = datetime.now().time()
+#figure.savefig(str("Figures/APscheme/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!
+#
