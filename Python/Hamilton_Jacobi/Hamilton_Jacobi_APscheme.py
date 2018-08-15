@@ -2,6 +2,7 @@ import matplotlib
 # matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 import gc 
 from datetime import datetime
 from time import time
@@ -110,23 +111,27 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     C = eps*np.log(dX) + max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
 
     func = lambda x: C - eps*np.log(x)-dT*x#the unknown rho is the root of this function
-    invd_func = lambda x: -x/(eps+dT*x)#inverse of the derivative of the above function
+    #invd_func = lambda x: -x/(eps+dT*x)#inverse of the derivative of the above function
+    fprime= lambda x: -eps/x-dT
+    fprime2= lambda x:eps/(x**2)
 
     # Compute rho:
     tol=np.power(10.,-13)
     err = 10.
     i = 0
-    r = np.sum(np.exp(u/eps))*dX # "dummy" rho
+    r0 = np.sum(np.exp(u/eps))*dX # "dummy" rho
 
-    while err>tol:
-        i+=1
-        newr=r-invd_func(r)*func(r)
-        err=np.abs(newr-r)
-        r=newr
-        if i>1000:
-            break
-    rho = r
-    u = dT*rho + A
+    rho=scipy.optimize.newton(func, r0, fprime=fprime, args=(), tol=tol, maxiter=1000, fprime2=fprime2)
+
+#    while err>tol:
+#        i+=1
+#        newr=r-invd_func(r)*func(r)
+#        err=np.abs(newr-r)
+#        r=newr
+#        if i>1000:
+#            break
+#    rho = r
+    u = -dT*rho + A
     return u, rho
 
 def build_and_save_HJ(u, parameters, pre_init_values, path):
@@ -167,7 +172,7 @@ def build_and_save_HJ(u, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 3, # maximal time 
+parameters = dict(T_max = 0.5, # maximal time 
                   dT = 0.0001, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
@@ -179,10 +184,10 @@ parameters = dict(T_max = 3, # maximal time
                   beta = 0, 
                   mu = 1,
                   sigma = 1.,
-                  tau = 0.4,  # transfer rate
-                  X_min = -1, #length of the numerical interval of traits (for PDE!)
-                  X_max=1,
-                  dX = 0.01, #discretization of the space of traits
+                  tau = 0.,  # transfer rate
+                  X_min = -2, #length of the numerical interval of traits (for PDE!)
+                  X_max=2,
+                  dX = 0.05, #discretization of the space of traits
                   eps = 0.1,
                   delta=0.05
                   )
