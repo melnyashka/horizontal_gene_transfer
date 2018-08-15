@@ -94,7 +94,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
     
     X_large=np.arange(2*X_min,2*X_max,dX)
-    transfer_kernel=  parameters['tau']*(np.arctan(-np.divide(X_large,parameters['delta']))-np.arctan(np.divide(X_large,parameters['delta'])))*dX
+    transfer_kernel=  parameters['tau']*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
     
     X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
     X_max_new=int((-3*X_min+X_max)/dX)
