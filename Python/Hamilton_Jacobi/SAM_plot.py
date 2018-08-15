@@ -14,7 +14,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 figure = plt.figure()
 #im = imshow(u.transpose(),cmap=cm.coolwarm)
-im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters['T_max'],parameters['X_min'],parameters['X_max']),vmin=-30)
+im = imshow(u.transpose()[::-1],cmap=cm.coolwarm,aspect='auto',extent=(0,parameters['T_max'],parameters['X_min'],parameters['X_max']))
 colorbar(im)
 par_str = '' # create a string of parameters to pass into plots
 for k, v in parameters.items():

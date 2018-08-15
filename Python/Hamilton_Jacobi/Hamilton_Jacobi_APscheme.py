@@ -18,7 +18,8 @@ def Pre_Initialization_HJ(parameters):
     X = np.arange(X_min,X_max,dX) #space of traits
        
     # u0 = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/((1+np.power(X,2))/2*(parameters['sigma0']*parameters['eps'])**2) # initial density 
-    u0 = -((np.abs(X)<=1)*(np.power(X,2)/2)+(np.abs(X)>1)*(np.abs(X)-1/2))
+    u0 = -((np.abs(X-parameters['x_mean0'])<=1)*(np.power(X-parameters['x_mean0'],2)/(2*parameters['sigma0']**2))
+           +(np.abs(X-parameters['x_mean0'])>1)*(np.abs(X-parameters['x_mean0'])/parameters['sigma0']**2-1/(2*parameters['sigma0']**2)))
     #u0= -np.divide(np.power(X-parameters['x_mean0'],2),1+2*np.power(X-parameters['x_mean0'],2))/(2*parameters['sigma0']**2)
     # Helene's trick:
     # u=(abs(x)<=1).*x.^2/2+(abs(x)>1).*(abs(x)-1/2) # first we initialize u
@@ -56,7 +57,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     Death, X = pre_init_values['Death'], pre_init_values['X']
 
     # now we define a grid to evaluate an integral, cutting all the unnecessary values
-    ymax = 8
+    ymax = 8*parameters['sigma']
     Ny=int(2*ymax/dX)
     dy=2*ymax/Ny
     y=np.arange(-ymax, ymax, dy)
@@ -92,7 +93,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
     
     X_large=np.arange(2*X_min,2*X_max,dX)
-    transfer_kernel=  parameters['tau']*(np.heaviside(-np.divide(X_large,parameters['delta']),1)-np.heaviside(np.divide(X_large,parameters['delta']),1))*dX
+    transfer_kernel=  parameters['tau']*(np.arctan(-np.divide(X_large,parameters['delta']))-np.arctan(np.divide(X_large,parameters['delta'])))*dX
     
     X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
     X_max_new=int((-3*X_min+X_max)/dX)
@@ -108,9 +109,9 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
 
     A = u + dT*(-pre_init_values['Death'] + H + T) # that's the birth-death-transfer term
     max_A = np.max(A)
-    C = eps*np.log(dX) + max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
+    E = eps*np.log(dX) + max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
 
-    func = lambda x: C - eps*np.log(x)-dT*x#the unknown rho is the root of this function
+    func = lambda x: E - eps*np.log(x)-parameters['C']*dT*x#the unknown rho is the root of this function
     #invd_func = lambda x: -x/(eps+dT*x)#inverse of the derivative of the above function
     fprime= lambda x: -eps/x-dT
     fprime2= lambda x:eps/(x**2)
@@ -131,7 +132,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
 #        if i>1000:
 #            break
 #    rho = r
-    u = -dT*rho + A
+    u = -parameters['C']*dT*rho + A
     return u, rho
 
 def build_and_save_HJ(u, parameters, pre_init_values, path):
@@ -172,8 +173,8 @@ def build_and_save_HJ(u, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 0.5, # maximal time 
-                  dT = 0.0001, # Discretization time 
+parameters = dict(T_max = 10, # maximal time 
+                  dT = 0.001, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -181,13 +182,11 @@ parameters = dict(T_max = 0.5, # maximal time
                   b_r = 1,     # birth rate
                   d_r = 1,      # death rate
                   d_e = 2,   #exponetial power
-                  beta = 0, 
-                  mu = 1,
-                  sigma = 1.,
-                  tau = 0.,  # transfer rate
+                  sigma = 0.1,
+                  tau = 0.3,  # transfer rate
                   X_min = -2, #length of the numerical interval of traits (for PDE!)
                   X_max=2,
-                  dX = 0.05, #discretization of the space of traits
+                  dX = 0.01, #discretization of the space of traits
                   eps = 0.1,
                   delta=0.05
                   )
