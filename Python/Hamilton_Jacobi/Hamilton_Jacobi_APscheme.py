@@ -100,7 +100,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     H = parameters['b_r']*np.exp(flux - np.power(np.ones([len(X)])*Yx,2)/2)/cste #*m_sq #*m(x) add a gaussian mutation kernel!
     H = np.sum(H,axis=0)*dy # that's the birth term
 
-    A = u + dT*(pre_init_values['Death'] - H - T) # that's the birth-death-transfer term
+    A = u + dT*(-pre_init_values['Death'] + H + T) # that's the birth-death-transfer term
     max_A = np.max(A)
     C = eps*np.log(dX) - max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
 
