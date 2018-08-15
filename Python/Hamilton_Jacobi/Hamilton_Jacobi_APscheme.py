@@ -90,17 +90,12 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     rho_u=np.sum(np.exp((u-max_u)/eps))*dX
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
     
-    transfer_kernel=  parameters['tau']*(np.arctan(X/parameters['delta'])-np.arctan(-X/parameters['delta']))*dX
+    X_large=np.arange(2*X_min,2*X_max,dX)
+    transfer_kernel=  parameters['tau']*(np.heaviside(-np.divide(X_large,parameters['delta']),1)-np.heaviside(np.divide(X_large,parameters['delta']),1))*dX
     
-    X_min_new=int(-X_min/dX)#Bounds for the new indexes that must be kept after the convolution
-    X_max_new=int((-2*X_min+X_max)/dX)
-    T = np.convolve(transfer_kernel,f)[X_min_new:X_max_new]# that's the transfer term
-
-
-    T = transfer*np.ones([len(X),1])*fsurrhou
-    T = np.sum(T,axis=0)*dX # that's the transfer term
-    #transfer = parameters['tau']*np.vectorize(lambda y: (np.arctan((X-y)/parameters['delta'],1)-np.heaviside((y-X)/parameters['delta'],1)))(y in X) # can be replaced by arctan
-
+    X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
+    X_max_new=int((-3*X_min+X_max)/dX)
+    T = np.convolve(transfer_kernel,u)[X_min_new:X_max_new]# that's the transfer term
 
 
     mut_kern = np.exp(-np.power(Yx,2)/(2*parameters['sigma']**2))
