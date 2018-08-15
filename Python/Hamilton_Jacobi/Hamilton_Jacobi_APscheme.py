@@ -102,10 +102,10 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
 
     A = u + dT*(-pre_init_values['Death'] + H + T) # that's the birth-death-transfer term
     max_A = np.max(A)
-    C = eps*np.log(dX) - max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
+    C = eps*np.log(dX) + max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
 
-    func = lambda x: C - eps*np.log(x)-dT*x
-    invd_func = lambda x: -x/(eps+dT*x)
+    func = lambda x: C - eps*np.log(x)-dT*x#the unknown rho is the root of this function
+    invd_func = lambda x: -x/(eps+dT*x)#inverse of the derivative of the above function
 
     # Compute rho:
     tol=np.power(10.,-13)
@@ -162,7 +162,7 @@ def build_and_save_HJ(u, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 10, # maximal time 
+parameters = dict(T_max = 3, # maximal time 
                   dT = 0.0001, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
