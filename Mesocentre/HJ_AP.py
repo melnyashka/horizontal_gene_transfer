@@ -90,8 +90,8 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
     
     X_large=np.arange(2*X_min,2*X_max,dX)
-    transfer_kernel=  parameters['tau']*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
-    #transfer_kernel = parameters['tau']*(np.heaviside(-X_large,1)-np.heaviside(X_large,1))*dX
+    #transfer_kernel=  parameters['tau']*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
+    transfer_kernel = parameters['tau']*(np.heaviside(X_large,1)-np.heaviside(-X_large,1))*dX
     
     X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
     X_max_new=int((-3*X_min+X_max)/dX)
@@ -170,7 +170,7 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 10, # maximal time 
+parameters = dict(T_max = 50, # maximal time 
                   dT = 1e-4, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
