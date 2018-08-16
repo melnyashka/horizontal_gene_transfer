@@ -37,6 +37,11 @@ plt.plot(Rho)
 plt.tight_layout()
 
 
+try:
+    1/1
+except:
+    print('erreur')
+
 
 #current_time = datetime.now().time()
 #figure.savefig(str("Figures/APscheme/plot_" + str(current_time)[0:8].replace(':','_')+".pdf")) # Possibly different delimeter on Linux and Windows!

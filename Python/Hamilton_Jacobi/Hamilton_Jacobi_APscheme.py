@@ -13,6 +13,7 @@ import scipy
 import gc 
 from datetime import datetime
 from time import time
+import sys
 
 def Pre_Initialization_HJ(parameters):
     dX, T_max, dT = parameters['dX'], parameters['T_max'], parameters['dT']
@@ -23,14 +24,15 @@ def Pre_Initialization_HJ(parameters):
 
     nX = int((X_max-X_min)/dX)    #number of traits
     X = np.arange(X_min,X_max,dX) #space of traits
-       
+    var_0=parameters['sigma0']**2 #*parameters['eps']   
     # u0 = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/((1+np.power(X,2))/2*(parameters['sigma0']*parameters['eps'])**2) # initial density 
-    u0 = -((np.abs(X-parameters['x_mean0'])<=1)*(np.power(X-parameters['x_mean0'],2)/(2*parameters['sigma0']**2))
-           +(np.abs(X-parameters['x_mean0'])>1)*(np.abs(X-parameters['x_mean0'])/parameters['sigma0']**2-1/(2*parameters['sigma0']**2)))
+    u0 = -((np.abs(X-parameters['x_mean0'])<=1)*(np.power(X-parameters['x_mean0'],2)/(2*var_0))
+           +(np.abs(X-parameters['x_mean0'])>1)*(np.abs(X-parameters['x_mean0'])/var_0-1/(2*var_0)))
     #u0= -np.divide(np.power(X-parameters['x_mean0'],2),1+2*np.power(X-parameters['x_mean0'],2))/(2*parameters['sigma0']**2)
     # Helene's trick:
     # u=(abs(x)<=1).*x.^2/2+(abs(x)>1).*(abs(x)-1/2) # first we initialize u
     rho0=np.sum(np.exp(u0/parameters['eps']))*dX  # then we initialize rho
+    u0=u0+parameters['eps']*np.log(parameters['rho0']/rho0)
     f0 = np.exp(u0/parameters['eps']) # then we initialize f
 
     f = np.empty([nT, nX])        #densities for all times
@@ -38,7 +40,7 @@ def Pre_Initialization_HJ(parameters):
     U[0]=u0 # matrix for u
     f[0]=f0 # matrix for f
     Rho=np.empty([nT])
-    Rho[0] = rho0
+    Rho[0] = parameters['rho0']
     
     # Computing constant death and mutation kernels
     Death = parameters['d_r']*np.power(np.absolute(X),parameters['d_e'])
@@ -114,29 +116,48 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     A = u + dT*(-pre_init_values['Death'] + H + T) # that's the birth-death-transfer term
     max_A = np.max(A)
     E = eps*np.log(dX) + max_A + eps*np.log(np.sum(np.exp((A-max_A)/eps)))
-
+    E2=dX*np.sum(np.exp((A-max_A)/eps))
+    
     func = lambda x: E - eps*np.log(x)-parameters['C']*dT*x#the unknown rho is the root of this function
     invd_func = lambda x: -x/(eps+dT*x)#inverse of the derivative of the above function
-    fprime= lambda x: -eps/x-dT
-    fprime2= lambda x:eps/(x**2)
+    #fprime= lambda x: -eps/x-dT
+    #fprime2= lambda x:eps/(x**2)
 
+    func2= lambda x: x*np.exp((dT*parameters['C']*x-max_A)/parameters['eps'])-E
+    invd_func2= lambda x: parameters['eps']/(1+parameters['C']*dT*x)*np.exp(-(dT*parameters['C']*x-max_A)/parameters['eps'])
     # Compute rho:
-    tol=np.power(10.,-13)
-    err = 10.
+    tol=np.power(10.,-7)
+    tol0=np.power(10.,-7)
+    threshold=np.power(10.,-10)
+    err = 10
     i = 0
-    r0 = np.sum(np.exp(u/eps))*dX # "dummy" rho
+    if rho>threshold:      
+        try:
+            r0 = np.sum(np.exp(u/eps))*dX # "dummy" rho
+        except:
+            r0=10
+            print('erreur dummy rho')
+    else:
+        r0=1
+        #print('BELOW THRESHOLD. rho = '+str(rho))
 
     # rho=scipy.optimize.newton(func, r0, fprime=fprime, args=(), tol=tol, maxiter=1000, fprime2=fprime2)
     r = r0
-    while err>tol:
+    while err>tol and r>=tol0 and i<1000:
         i+=1
-        newr=r-invd_func(r)*func(r)
+        if r>threshold:
+            newr=r-invd_func(r)*func(r)
+        else:
+            newr= r-invd_func2(r)*func2(r)
+            #print('methode 2')
         err=np.abs(newr-r)
+        #print('for i= '+str(i)+' we have r= '+str(r)+' and newr = '+str(newr))
         r=newr
-        if i>1000:
-            break
-    rho = r
+
+    rho = max(r,0)
     u = -parameters['C']*dT*rho + A
+    #u= A
+    #u=u-np.maximum(np.max(u),0)
     return u, rho
 
 def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
@@ -151,19 +172,18 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
     X, nT = pre_init_values['X'], pre_init_values['nT']
     X_min, X_max, dX = parameters['X_min'], parameters['X_max'], parameters['dX']
     f = np.exp(u/parameters['eps'])
-    sum_f = rho
-    computed_mean = np.divide(np.sum(X*f, axis = 1), sum_f)*dX
+    computed_mean = np.mean(X*f, axis = 1)/rho
     figure = plt.figure()
     plt.suptitle(par_str, y = 1.1)
     grid = plt.GridSpec(2,5, wspace = 0.9, hspace = 0.5)
     fig1 = plt.subplot(grid[:,:-2])
     fig1.imshow(u.transpose()[::-1],cmap=plt.cm.jet, aspect = 'auto', extent = (0,parameters['T_max'], X_min, X_max), 
-            vmin = np.min(u)/10, vmax = np.max(u))
+            vmin = np.min(u)*dX, vmax = np.max(u)*dX)
     fig1.set_xlabel('time')
     fig1.set_ylabel('trait')
     fig1.set_title('Population dynamics')
     fig2 = plt.subplot(grid[0,3:])
-    plt.plot(np.arange(nT)*parameters['dT'], sum_f)
+    plt.plot(np.arange(nT)*parameters['dT'], rho)
     fig2.set_title("Rho")
     fig3 = plt.subplot(grid[1,3:])
     plt.plot(np.arange(nT)*parameters['dT'], computed_mean)
@@ -179,32 +199,37 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 10, # maximal time 
+parameters = dict(T_max = 100, # maximal time 
                   dT = 0.001, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
+                  rho0=2.,
                   C = 0.5,    # competition
 #                 p = 0.03,      # Probability of mutation
                   b_r = 1,     # birth rate
                   d_r = 1,      # death rate
                   d_e = 2,   #exponetial power
                   sigma = 0.01,
-                  tau = 0.7,  # transfer rate
-                  X_min = -2, #length of the numerical interval of traits (for PDE!)
-                  X_max=2,
+                  tau = 0.1,  # transfer rate
+                  X_min = -3, #length of the numerical interval of traits (for PDE!)
+                  X_max=5,
                   dX = 0.01, #discretization of the space of traits
-                  eps = 10e-7,
-                  delta=0.05
+                  eps = 10e-5,
+                  delta=0.25
                   )
 
 pre_init_values = Pre_Initialization_HJ(parameters) 
 U, Rho, nT = pre_init_values['U'], pre_init_values['Rho'], pre_init_values['nT']
 for i in range(nT-1):
     U[i+1], Rho[i+1] = Next_Generation_AP(U[i], Rho[i], parameters, pre_init_values)
-    if i%1000==0: 
+    if i%500==0: 
         print(str(i)+"-th iteration")
         print(np.any(np.isnan(U[i+1])))
-        plt.plot(U[i+1,])
+        if np.any(np.isnan(U[i+1])) or np.any(np.isnan(Rho[i+1])):
+            sys.exit()
+        plt.plot(U[i+1,],label='Time = '+str(i*parameters['dT']))
+        plt.legend()
+        #plt.title()
         plt.show()
 
 
@@ -212,5 +237,5 @@ for i in range(nT-1):
 
 
 
-build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/")
+build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/APscheme/")
 
