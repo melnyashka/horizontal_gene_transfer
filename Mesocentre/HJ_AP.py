@@ -1,6 +1,6 @@
 # %load 'horizontal_gene_transfer/Python/Hamilton_Jacobi/Hamilton_Jacobi_APscheme.py'
 import matplotlib 
-# matplotlib.use("Agg")
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
@@ -90,8 +90,8 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
     
     X_large=np.arange(2*X_min,2*X_max,dX)
-    #transfer_kernel=  parameters['tau']*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
-    transfer_kernel = parameters['tau']*(np.heaviside(-X_large,1)-np.heaviside(X_large,1))*dX
+    transfer_kernel=  parameters['tau']*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
+    #transfer_kernel = parameters['tau']*(np.heaviside(-X_large,1)-np.heaviside(X_large,1))*dX
     
     X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
     X_max_new=int((-3*X_min+X_max)/dX)
@@ -198,5 +198,5 @@ for tau_i in np.arange(0.2,1,0.05):
         for i in range(nT-1):
             U[i+1], Rho[i+1] = Next_Generation_AP(U[i], Rho[i], parameters, pre_init_values)
             if i%1000==0: 
-                print(str(i)+"-th iteration", flush = True)ters, pre_init_values, "Figures/")
-        build_and_save_HJ(U, Rho, parameters, pre_init_values, "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/")
+                print(str(i)+"-th iteration", flush = True)
+        build_and_save_HJ(U, Rho, parameters, pre_init_values, "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/HJ/")
