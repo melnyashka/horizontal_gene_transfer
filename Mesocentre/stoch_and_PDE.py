@@ -173,8 +173,8 @@ if __name__ == "__main__":
                       dT = 0.01, # Discretization time 
                       sigma0 = 0.01,  #Initial standard variation of the population
                       x_mean0 = 0.,
-                      K = 1000, # Maximal capacity of the system
-                      N0 = 1000,    # Initial number of population
+                      K = 10000, # Maximal capacity of the system
+                      N0 = 10000,    # Initial number of population
                       C = 0.5,    # competition
     #                 p = 0.03,      # Probability of mutation
                       b_r = 2,     # birth rate
@@ -182,7 +182,7 @@ if __name__ == "__main__":
                       d_e = 2,   #exponetial power
                       beta = 0, 
                       mu = 1,
-                      sigma = 0.1,
+                      sigma = 0.01,
                       tau = 0.3,  # transfer rate
                       X_min = -0.2, #length of the numerical interval of traits (for PDE!)
                       X_max=1.5,
@@ -190,8 +190,8 @@ if __name__ == "__main__":
                       eps = 1
                       )
     # Let us check the next taus:
-    tau_i = np.arange(0.2,0.55,0.025)
-
+    #tau_i = np.arange(0.2,0.55,0.025)
+    tau_i = [0.1, 0.4, 0.5, 0.9]
     for i in range(len(tau_i)):
         print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
         parameters['tau'] = tau_i[i] 
