@@ -177,7 +177,7 @@ if __name__ == "__main__":
                       N0 = 10000,    # Initial number of population
                       C = 0.5,    # competition
     #                 p = 0.03,      # Probability of mutation
-                      b_r = 2,     # birth rate
+                      b_r = 1,     # birth rate
                       d_r = 1,      # death rate
                       d_e = 2,   #exponetial power
                       beta = 0, 
@@ -191,7 +191,7 @@ if __name__ == "__main__":
                       )
     # Let us check the next taus:
     #tau_i = np.arange(0.2,0.55,0.025)
-    tau_i = [0.1, 0.4, 0.5, 0.9]
+    tau_i = [0.1, 0.4, 0.5, 0.5, 0.9]
     for i in range(len(tau_i)):
         print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
         parameters['tau'] = tau_i[i] 
