@@ -171,7 +171,7 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 #######################################
 
 parameters = dict(T_max = 50, # maximal time 
-                  dT = 1e-4, # Discretization time 
+                  dT = 1e-3, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   C = 0.5,    # competition
@@ -188,7 +188,7 @@ parameters = dict(T_max = 50, # maximal time
                   delta=1e-4
                   )
 
-for tau_i in np.arange(0.2,1,0.05):
+for tau_i in np.arange(0.,1.,0.05):
     for eps_i in np.geomspace(1e-6, 1, num = 7):
         parameters['tau'] = tau_i
         parameters['eps'] = eps_i
