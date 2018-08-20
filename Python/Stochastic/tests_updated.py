@@ -1,7 +1,7 @@
 # import stochastic_continuous # Check if it works on your machine! 
-parameters = dict(T_max = 5000, # maximal time 
+parameters = dict(T_max = 500, # maximal time 
                 dT = 0.1, # Discretization time 
-                K = 1000, # Maximal capacity of the system
+                K = 2500, # Maximal capacity of the system
                 N0 = 1000,    # Initial number of population
                 sigma0=0.1,  #Initial standard variation of the population
                 x_mean0=0.,
@@ -13,7 +13,7 @@ parameters = dict(T_max = 5000, # maximal time
                 beta = 0, 
                 mu = 1,
                 sigma = 0.01,
-                tau = 0.28 # transfer rate
+                tau = 0.3 # transfer rate
                 )
 
 # Change some parameters if needed!
@@ -24,15 +24,17 @@ X0 = np.random.normal(parameters['x_mean0'], parameters['sigma0'], parameters['N
 #X = [None]*int(parameters['T_max']/parameters['dT'])  # history of all populations up to time T_max
 X = np.sort(X0)
 
-Abs=[]#Save all the individuals
-Ord=[]
+Abs=np.array([])#Save all the individuals
+Ord=np.array([])
 
-for tau_iter in np.arange(0, 2, 0.1):
-    parameters['tau'] = tau_iter
-    for i in range(int(parameters['T_max']/parameters['dT']-1)):
-        for x in X:
-            Abs.append(i*parameters['dT'])
-            Ord.append(x)
-        X=Next_Generation(X, parameters)
-    build_and_save(Abs, Ord, parameters, path = "Figures/") # build and save a plot in folder Figures in home directory (you must create it first!)
-    gc.collect()
+
+  
+for i in range(int(parameters['T_max']/parameters['dT']-1)):
+    if i%1000==0:
+        print(str(i)+'th iteration.')
+    Abs_new=np.ones(np.size(X))*(i*parameters['dT'])
+    Abs=np.concatenate((Abs,Abs_new))
+    Ord=np.concatenate((Ord,X))
+    X=Next_Generation(X, parameters)
+build_and_save(Abs, Ord, parameters, path = "Figures/") # build and save a plot in folder Figures in home directory (you must create it first!)
+#gc.collect()
