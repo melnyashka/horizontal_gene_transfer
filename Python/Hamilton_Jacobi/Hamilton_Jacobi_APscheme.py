@@ -199,7 +199,7 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 100, # maximal time 
+parameters = dict(T_max = 30, # maximal time 
                   dT = 0.001, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
@@ -210,7 +210,7 @@ parameters = dict(T_max = 100, # maximal time
                   d_r = 1,      # death rate
                   d_e = 2,   #exponetial power
                   sigma = 0.01,
-                  tau = 0.7,  # transfer rate
+                  tau = 0.3,  # transfer rate
                   X_min = -3, #length of the numerical interval of traits (for PDE!)
                   X_max=5,
                   dX = 0.01, #discretization of the space of traits
