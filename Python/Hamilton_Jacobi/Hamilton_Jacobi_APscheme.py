@@ -98,7 +98,7 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     fsurrhou=np.exp((u-max_u)/eps)/rho_u
     
     X_large=np.arange(2*X_min,2*X_max,dX)
-    transfer_kernel=  parameters['tau']*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
+    transfer_kernel=  parameters['tau']*1/np.pi*(np.arctan(np.divide(X_large,parameters['delta']))-np.arctan(-np.divide(X_large,parameters['delta'])))*dX
     # transfer_kernel = parameters['tau']*(np.heaviside(-np.divide(X_large,parameters['delta']),1)-np.heaviside(np.divide(X_large,parameters['delta']),1))*dX
     
     X_min_new=int(-2*X_min/dX)#Bounds for the new indexes that must be kept after the convolution
@@ -123,11 +123,11 @@ def Next_Generation_AP(u, rho, parameters, pre_init_values):
     #fprime= lambda x: -eps/x-dT
     #fprime2= lambda x:eps/(x**2)
 
-    func2= lambda x: x*np.exp((dT*parameters['C']*x-max_A)/parameters['eps'])-E
+    func2= lambda x: x*np.exp((dT*parameters['C']*x-max_A)/parameters['eps'])-E2
     invd_func2= lambda x: parameters['eps']/(1+parameters['C']*dT*x)*np.exp(-(dT*parameters['C']*x-max_A)/parameters['eps'])
     # Compute rho:
     tol=np.power(10.,-7)
-    tol0=np.power(10.,-7)
+    tol0=np.power(10.,-10)
     threshold=np.power(10.,-10)
     err = 10
     i = 0
@@ -168,13 +168,14 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
         else:
             smth=", "
         par_str+=k+"="+str(v)+smth
+    Small_title= 'T_max='+str(parameters['T_max'])+', dT='+str(parameters['dT'])+', tau='+str(parameters['tau'])
     # Now we have to compute the mean trait and the population size at each time! 
     X, nT = pre_init_values['X'], pre_init_values['nT']
     X_min, X_max, dX = parameters['X_min'], parameters['X_max'], parameters['dX']
     f = np.exp(u/parameters['eps'])
     computed_mean = np.mean(X*f, axis = 1)/rho
     figure = plt.figure()
-    plt.suptitle(par_str, y = 1.1)
+    plt.suptitle(Small_title, y = 1.1)
     grid = plt.GridSpec(2,5, wspace = 0.9, hspace = 0.5)
     fig1 = plt.subplot(grid[:,:-2])
     fig1.imshow(u.transpose()[::-1],cmap=plt.cm.jet, aspect = 'auto', extent = (0,parameters['T_max'], X_min, X_max), 
@@ -189,7 +190,7 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
     plt.plot(np.arange(nT)*parameters['dT'], computed_mean)
     fig3.set_title("Mean trait")
     current_time = datetime.now().time()
-    figure.savefig(str(path +"plot_"+str(current_time)[0:8]+".pdf"), bbox_inches ='tight')
+    figure.savefig(str(path +'delta_'+str(parameters['delta'])+'__dX_'+str(parameters['dX'])+"plot_"+str(current_time)[0:8]+".pdf"), bbox_inches ='tight')
     plt.show()
 
 
@@ -199,8 +200,8 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 30, # maximal time 
-                  dT = 0.001, # Discretization time 
+parameters = dict(T_max = 20, # maximal time 
+                  dT = 0.00005, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   rho0=2.,
@@ -209,33 +210,29 @@ parameters = dict(T_max = 30, # maximal time
                   b_r = 1,     # birth rate
                   d_r = 1,      # death rate
                   d_e = 2,   #exponetial power
-                  sigma = 0.01,
-                  tau = 0.3,  # transfer rate
-                  X_min = -3, #length of the numerical interval of traits (for PDE!)
-                  X_max=5,
-                  dX = 0.01, #discretization of the space of traits
-                  eps = 10e-5,
-                  delta=0.25
+                  sigma = 1,
+                  tau = 0.1,  # transfer rate
+                  X_min = -0.6, #length of the numerical interval of traits (for PDE!)
+                  X_max=1.6,
+                  dX = 0.04, #discretization of the space of traits
+                  eps = 0.01,
+                  delta=0.005
                   )
 
-pre_init_values = Pre_Initialization_HJ(parameters) 
-U, Rho, nT = pre_init_values['U'], pre_init_values['Rho'], pre_init_values['nT']
-for i in range(nT-1):
-    U[i+1], Rho[i+1] = Next_Generation_AP(U[i], Rho[i], parameters, pre_init_values)
-    if i%500==0: 
-        print(str(i)+"-th iteration")
-        print(np.any(np.isnan(U[i+1])))
-        if np.any(np.isnan(U[i+1])) or np.any(np.isnan(Rho[i+1])):
-            sys.exit()
-        plt.plot(U[i+1,],label='Time = '+str(i*parameters['dT']))
-        plt.legend()
-        #plt.title()
-        plt.show()
-
-
-
-
-
-
-build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/APscheme/")
+for j in np.array([3.]):
+    parameters['tau']=j
+    pre_init_values = Pre_Initialization_HJ(parameters) 
+    U, Rho, nT = pre_init_values['U'], pre_init_values['Rho'], pre_init_values['nT']
+    for i in range(nT-1):
+        U[i+1], Rho[i+1] = Next_Generation_AP(U[i], Rho[i], parameters, pre_init_values)
+        if i%500==0: 
+            print("tau="+str(j)+'. '+str(i)+"-th iteration, over "+str(nT))
+            #print(np.any(np.isnan(U[i+1])))
+            #if np.any(np.isnan(U[i+1])) or np.any(np.isnan(Rho[i+1])):
+            #    sys.exit()
+            #plt.plot(U[i+1,],label='Time = '+str(i*parameters['dT']))
+            #plt.legend()
+            #plt.title()
+            #plt.show()
+    build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/APscheme/")
 

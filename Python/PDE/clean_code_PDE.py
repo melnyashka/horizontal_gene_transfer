@@ -94,8 +94,8 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
 
 if __name__ == "__main__":
 
-    parameters = dict(T_max = 100, # maximal time 
-                      dT = 0.001, # Discretization time 
+    parameters = dict(T_max = 750, # maximal time 
+                      dT = 0.01, # Discretization time 
                       sigma0 = 0.01,  #Initial standard variation of the population
                       x_mean0 = 0.,
                       C = 0.5,    # competition
@@ -106,7 +106,7 @@ if __name__ == "__main__":
                       beta = 0, 
                       mu = 1,
                       sigma = 0.01,
-                      tau = 0.3,  # transfer rate
+                      tau = 2,  # transfer rate
                       X_min = -0.2, #length of the numerical interval of traits (for PDE!)
                       X_max=1.5,
                       dX = 0.01, #discretization of the space of traits
@@ -115,8 +115,8 @@ if __name__ == "__main__":
         
     # Loop over given parameters
     param='tau' # here we check the value
-    param_m=0.2
-    param_M=0.55
+    param_m=2
+    param_M=3
     param_step=25
     J=np.arange(param_m,param_M,param_step)
     for j in J:
@@ -132,4 +132,4 @@ if __name__ == "__main__":
                 print('T= '+str(i*parameters['dT']), flush = True)
 
             
-
+build_and_save_PDE(f, parameters, pre_init_values, "Figures/")
