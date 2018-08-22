@@ -200,7 +200,7 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 20, # maximal time 
+parameters = dict(T_max = 10, # maximal time 
                   dT = 0.00005, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
@@ -212,14 +212,14 @@ parameters = dict(T_max = 20, # maximal time
                   d_e = 2,   #exponetial power
                   sigma = 1,
                   tau = 0.1,  # transfer rate
-                  X_min = -0.6, #length of the numerical interval of traits (for PDE!)
-                  X_max=1.6,
-                  dX = 0.04, #discretization of the space of traits
+                  X_min = -1.5, #length of the numerical interval of traits (for PDE!)
+                  X_max=2.5,
+                  dX = 0.1, #discretization of the space of traits
                   eps = 0.01,
                   delta=0.005
                   )
 
-for j in np.array([3.]):
+for j in np.array([0.005,0.01,0.1,0.4,0.9,1.5,3.,5.]):
     parameters['tau']=j
     pre_init_values = Pre_Initialization_HJ(parameters) 
     U, Rho, nT = pre_init_values['U'], pre_init_values['Rho'], pre_init_values['nT']
