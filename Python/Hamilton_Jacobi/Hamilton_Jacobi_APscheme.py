@@ -200,8 +200,8 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 10, # maximal time 
-                  dT = 0.00005, # Discretization time 
+parameters = dict(T_max = 20, # maximal time 
+                  dT = 0.00025, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   rho0=2.,
@@ -219,7 +219,7 @@ parameters = dict(T_max = 10, # maximal time
                   delta=0.005
                   )
 
-for j in np.array([0.005,0.01,0.1,0.4,0.9,1.5,3.,5.]):
+for j in np.array([1.]):
     parameters['tau']=j
     pre_init_values = Pre_Initialization_HJ(parameters) 
     U, Rho, nT = pre_init_values['U'], pre_init_values['Rho'], pre_init_values['nT']

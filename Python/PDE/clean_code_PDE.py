@@ -51,8 +51,11 @@ def Next_Generation_PDE(f,parameters, pre_init_values):
     
     death_term = Death + rho*parameters['C']
     birth_part = np.convolve(Mutation_kernel,f)[X_min_new:X_max_new]
-    transfer_part = parameters['tau']/rho*parameters['dX']*np.fromiter((np.sum(f[:i])-np.sum(f[i:]) for i in I),float)
-    #new_f = np.maximum(0,f + dT/parameters['eps']*(np.multiply(f,(-death_term+ transfer_part))+birth_part))
+    if rho>np.power(10.,-7):
+        transfer_part = parameters['tau']/rho*parameters['dX']*np.fromiter((np.sum(f[:i])-np.sum(f[i:]) for i in I),float)
+    else :
+        transfer_part = 0
+     #new_f = np.maximum(0,f + dT/parameters['eps']*(np.multiply(f,(-death_term+ transfer_part))+birth_part))
     new_f = f + dT/parameters['eps']*(np.multiply(f,(-death_term + transfer_part))+birth_part)
     return new_f
 
@@ -94,8 +97,8 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
 
 if __name__ == "__main__":
 
-    parameters = dict(T_max = 750, # maximal time 
-                      dT = 0.01, # Discretization time 
+    parameters = dict(T_max = 7, # maximal time 
+                      dT = 0.0005, # Discretization time 
                       sigma0 = 0.01,  #Initial standard variation of the population
                       x_mean0 = 0.,
                       C = 0.5,    # competition
@@ -105,19 +108,19 @@ if __name__ == "__main__":
                       d_e = 2,   #exponetial power
                       beta = 0, 
                       mu = 1,
-                      sigma = 0.01,
-                      tau = 2,  # transfer rate
-                      X_min = -0.2, #length of the numerical interval of traits (for PDE!)
+                      sigma = 1,
+                      tau = 0.1,  # transfer rate
+                      X_min = -0.5, #length of the numerical interval of traits (for PDE!)
                       X_max=1.5,
-                      dX = 0.01, #discretization of the space of traits
-                      eps = 1
+                      dX = 0.05, #discretization of the space of traits
+                      eps = 0.01
                       )
         
     # Loop over given parameters
     param='tau' # here we check the value
-    param_m=2
-    param_M=3
-    param_step=25
+    param_m=0.95
+    param_M=1
+    param_step=0.01
     J=np.arange(param_m,param_M,param_step)
     for j in J:
         pre_init_values = Pre_Initialization_PDE(parameters) 
@@ -130,6 +133,4 @@ if __name__ == "__main__":
             f[i+1] = Next_Generation_PDE(f[i],parameters, pre_init_values)
             if i%1000==0:
                 print('T= '+str(i*parameters['dT']), flush = True)
-
-            
-build_and_save_PDE(f, parameters, pre_init_values, "Figures/")
+        build_and_save_PDE(f, parameters, pre_init_values, "Figures/")
