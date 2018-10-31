@@ -67,6 +67,7 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
         else:
             smth=", "
         par_str+=k+"="+str(v)+smth
+    par_str='T_max='+str(parameters['T_max'])+', dT='+str(parameters['dT'])+', tau='+str(parameters['tau'])
     # Now we have to compute the mean trait and the population size at each time! 
     X, nT = pre_init_values['X'], pre_init_values['nT']
     sum_f = np.sum(f, axis = 1)
@@ -75,8 +76,8 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
     plt.suptitle(par_str, y = 1.1)
     grid = plt.GridSpec(2,5, wspace = 0.9, hspace = 0.5)
     fig1 = plt.subplot(grid[:,:-2])
-    fig1.imshow(f.transpose()[::-1],cmap=plt.cm.jet, aspect = 'auto', extent = (0,parameters['T_max'], X_min, X_max), 
-            vmin = 0, vmax = 1)
+    fig1.imshow(f.transpose()[::-1],cmap=plt.cm.jet, aspect = 'auto', extent = (0,parameters['T_max'], parameters['X_min'],parameters['X_max']), 
+            vmin = 0, vmax = 4)
     fig1.set_xlabel('time')
     fig1.set_ylabel('trait')
     fig1.set_title('Population dynamics')
@@ -97,8 +98,8 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
 
 if __name__ == "__main__":
 
-    parameters = dict(T_max = 7, # maximal time 
-                      dT = 0.0005, # Discretization time 
+    parameters = dict(T_max = 1000, # maximal time 
+                      dT = 0.001, # Discretization time 
                       sigma0 = 0.01,  #Initial standard variation of the population
                       x_mean0 = 0.,
                       C = 0.5,    # competition
@@ -108,12 +109,12 @@ if __name__ == "__main__":
                       d_e = 2,   #exponetial power
                       beta = 0, 
                       mu = 1,
-                      sigma = 1,
+                      sigma = 0.01,
                       tau = 0.1,  # transfer rate
                       X_min = -0.5, #length of the numerical interval of traits (for PDE!)
                       X_max=1.5,
-                      dX = 0.05, #discretization of the space of traits
-                      eps = 0.01
+                      dX = 0.01, #discretization of the space of traits
+                      eps = 1
                       )
         
     # Loop over given parameters
@@ -121,7 +122,7 @@ if __name__ == "__main__":
     param_m=0.95
     param_M=1
     param_step=0.01
-    J=np.arange(param_m,param_M,param_step)
+    J=[0.4,0.9,1.2,0.02]
     for j in J:
         pre_init_values = Pre_Initialization_PDE(parameters) 
         f, nT = pre_init_values['f'], pre_init_values['nT']

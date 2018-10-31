@@ -178,8 +178,8 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
     plt.suptitle(Small_title, y = 1.1)
     grid = plt.GridSpec(2,5, wspace = 0.9, hspace = 0.5)
     fig1 = plt.subplot(grid[:,:-2])
-    fig1.imshow(u.transpose()[::-1],cmap=plt.cm.jet, aspect = 'auto', extent = (0,parameters['T_max'], X_min, X_max), 
-            vmin = np.min(u)*dX, vmax = np.max(u)*dX)
+    fig1.imshow(u.transpose()[::-1],cmap=plt.cm.jet,aspect = 'auto', extent = (0,parameters['T_max'], X_min, X_max), 
+            vmin = np.min(u)*parameters['eps']*5, vmax = 0)
     fig1.set_xlabel('time')
     fig1.set_ylabel('trait')
     fig1.set_title('Population dynamics')
@@ -200,8 +200,8 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 ####### EXECUTABLE PART ###############
 #######################################
 
-parameters = dict(T_max = 15, # maximal time 
-                  dT = 0.00005, # Discretization time 
+parameters = dict(T_max = 20, # maximal time 
+                  dT = 0.0005, # Discretization time 
                   sigma0 = 1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   rho0=2.,
@@ -212,14 +212,14 @@ parameters = dict(T_max = 15, # maximal time
                   d_e = 2,   #exponetial power
                   sigma = 1,
                   tau = 0.1,  # transfer rate
-                  X_min = -1., #length of the numerical interval of traits (for PDE!)
-                  X_max=2.5,
-                  dX = 0.01, #discretization of the space of traits
+                  X_min = -1.5, #length of the numerical interval of traits (for PDE!)
+                  X_max=2,
+                  dX = 0.05, #discretization of the space of traits
                   eps = 0.01,
                   delta=0.005
                   )
 
-for j in np.array([0.01,0.1,0.4,0.9,1.2,0.6]):
+for j in np.array([0.03,0.04]):
     parameters['tau']=j
     pre_init_values = Pre_Initialization_HJ(parameters) 
     U, Rho, nT = pre_init_values['U'], pre_init_values['Rho'], pre_init_values['nT']
@@ -234,5 +234,5 @@ for j in np.array([0.01,0.1,0.4,0.9,1.2,0.6]):
             #plt.legend()
             #plt.title()
             #plt.show()
-    build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/APscheme/")
+    build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/")
 

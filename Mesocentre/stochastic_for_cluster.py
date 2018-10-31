@@ -91,12 +91,12 @@ if __name__ == "__main__":
                     d_r = 1,      # death rate
                     C = 0.5,    # competition
                     sigma = 0.01, # mutation variance
-                    tau = 0.1,  # transfer rate
-                    x_mean = 1
+                    tau = 0.05,  # transfer rate
+                    x_mean = 0
                     )
 
     # Let us check the next taus:
-    tau_i = np.arange(0.48,0.52,0.005)
+    tau_i = np.arange(0.05,0.1,1)
 
     for i in range(len(tau_i)):
         print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
@@ -113,9 +113,9 @@ if __name__ == "__main__":
             len_x[i], mean_x[i] = len(X), np.mean(X)
             X=Next_Generation(X, parameters)
             if i%100 == 0: print("That is our "+str(i)+ "-th iteration, it lasted "+str(round(time()-start_time, 3))+"s", flush = True)
-        gc.collect()
-        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/crittau/") 
+        #gc.collect()
+        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "NewFigures/") 
      
-    
+    #path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/crittau/"
 
     

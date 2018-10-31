@@ -49,6 +49,7 @@ def build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path): # function fo
         else: 
             smth = ", "
         par_str += k + "=" + str(v) + smth
+    par_str = 'T_max='+str(parameters['T_max'])+', dT='+str(parameters['dT'])+', tau='+str(parameters['tau'])+', N0='+str(parameters['N0'])
     figure = plt.figure()
     plt.suptitle(par_str, y = 1.1)
     grid = plt.GridSpec(2,5, wspace = 0.9, hspace = 0.5)
@@ -169,8 +170,8 @@ def build_and_save_PDE(f, parameters, pre_init_values, path):
 
 if __name__ == "__main__":
 
-    parameters = dict(T_max = 1000, # maximal time 
-                      dT = 0.01, # Discretization time 
+    parameters = dict(T_max = 600, # maximal time 
+                      dT = 0.1, # Discretization time 
                       sigma0 = 0.01,  #Initial standard variation of the population
                       x_mean0 = 0.,
                       K = 10000, # Maximal capacity of the system
@@ -184,14 +185,14 @@ if __name__ == "__main__":
                       mu = 1,
                       sigma = 0.01,
                       tau = 0.3,  # transfer rate
-                      X_min = -0.2, #length of the numerical interval of traits (for PDE!)
-                      X_max=1.5,
-                      dX = 0.01, #discretization of the space of traits
+                      X_min = -0.5, #length of the numerical interval of traits (for PDE!)
+                      X_max=1,
+                      dX = 0.5, #discretization of the space of traits
                       eps = 1
                       )
     # Let us check the next taus:
     #tau_i = np.arange(0.2,0.55,0.025)
-    tau_i = [0.1, 0.4, 0.5, 0.5, 0.9]
+    tau_i = [0.46,0.46,0.46,0.46]
     for i in range(len(tau_i)):
         print(str(i) + " and " + str(round(tau_i[i],3)), flush = True)
         parameters['tau'] = tau_i[i] 
@@ -205,9 +206,9 @@ if __name__ == "__main__":
             start_time = time()
             XT[i], len_x[i], mean_x[i] = discretize(X, Ord), len(X)/parameters['K'], np.mean(X)
             X = Next_Generation(X, parameters)
-            f[i+1] = Next_Generation_PDE(f[i],parameters, pre_init_values)
+            #f[i+1] = Next_Generation_PDE(f[i],parameters, pre_init_values)
             if i%100 == 0: print("That is our "+str(i)+ "-th iteration, it lasted "+str(round(time()-start_time, 3))+"s", flush = True)
-        gc.collect()
-        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/Stoch/") 
-        build_and_save_PDE(f, parameters, pre_init_values, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/PDE/")
-    
+        #gc.collect()
+        build_and_save(Abs, Ord, XT, len_x, mean_x, parameters, path = "NewFigures/") 
+        #build_and_save_PDE(f, parameters, pre_init_values, path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/PDE/")
+    #path = "/scratch/gene/horizontal_gene_transfer/Mesocentre/Figures/Stoch/"

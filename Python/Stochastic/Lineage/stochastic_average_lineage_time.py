@@ -13,7 +13,7 @@ def horizontal_transfer(x, tau, beta, mu):
     
 
 
-def Next_Generation_lineage(x,l, parameters):
+def Next_Generation_lineage(x,l,t, parameters):
     b_r, d_r, C, K, sigma, d_e = parameters['b_r'], parameters['d_r'], parameters['C'], parameters['K'], parameters['sigma'],parameters['d_e']
     n_tot = x.size
     f=np.vectorize(lambda e: np.random.choice(x[x>=e]),otypes=[np.float64])
@@ -28,7 +28,7 @@ def Next_Generation_lineage(x,l, parameters):
         x_birth=x[b_mat[0]]
         l_add_birth=l[b_mat[0]]
         for i in range(x_birth.size):
-            l_add_birth[i]=l_add_birth[i]+[x_birth[i]]
+            l_add_birth[i]=l_add_birth[i]+[(t,x_birth[i])]
         x_HT=x[b_mat[2]]
         if x_HT.size==0:
             x_HT_add=x_HT
@@ -36,7 +36,7 @@ def Next_Generation_lineage(x,l, parameters):
             x_HT_add=f(x_HT)
         l_add_HT=l[b_mat[2]]
         for i in range(x_HT.size):
-            l_add_HT[i]=l_add_HT[i]+[x_HT[i]]
+            l_add_HT[i]=l_add_HT[i]+[(t,x_HT[i])]
         x_new=np.concatenate((x[np.logical_not(np.logical_or(b_mat[1],b_mat[2]))],
                                        np.random.normal(loc=x_birth, scale=sigma, size=None),
                                        x_HT_add))
@@ -45,4 +45,3 @@ def Next_Generation_lineage(x,l, parameters):
                                        l_add_HT))
         return x_new,l_new
 
- 
