@@ -24,7 +24,7 @@ def Pre_Initialization_HJ(parameters):
 
     nX = int((X_max-X_min)/dX)    #number of traits
     X = np.arange(X_min,X_max,dX) #space of traits
-    var_0=parameters['sigma0']**2 #*parameters['eps']   
+    var_0=parameters['sigma0']**2/parameters['eps']   
     # u0 = np.exp(-np.power(np.absolute(X-parameters['x_mean0']),2)/((1+np.power(X,2))/2*(parameters['sigma0']*parameters['eps'])**2) # initial density 
     u0 = -((np.abs(X-parameters['x_mean0'])<=1)*(np.power(X-parameters['x_mean0'],2)/(2*var_0))
            +(np.abs(X-parameters['x_mean0'])>1)*(np.abs(X-parameters['x_mean0'])/var_0-1/(2*var_0)))
@@ -202,7 +202,7 @@ def build_and_save_HJ(u, rho, parameters, pre_init_values, path):
 
 parameters = dict(T_max = 20, # maximal time 
                   dT = 0.0005, # Discretization time 
-                  sigma0 = 1,  #Initial standard variation of the population
+                  sigma0 = 0.1,  #Initial standard variation of the population
                   x_mean0 = 0.,
                   rho0=2.,
                   C = 0.5,    # competition
@@ -210,7 +210,7 @@ parameters = dict(T_max = 20, # maximal time
                   b_r = 1,     # birth rate
                   d_r = 1,      # death rate
                   d_e = 2,   #exponetial power
-                  sigma = 1,
+                  sigma = 0.01,
                   tau = 0.1,  # transfer rate
                   X_min = -1.5, #length of the numerical interval of traits (for PDE!)
                   X_max=2,
@@ -227,6 +227,9 @@ for j in np.array([0.03,0.04]):
         U[i+1], Rho[i+1] = Next_Generation_AP(U[i], Rho[i], parameters, pre_init_values)
         if i%500==0: 
             print("tau="+str(j)+'. '+str(i)+"-th iteration, over "+str(nT))
+            print(str(Rho[i]))
+            plt.plot(U[i])
+            plt.show()
             #print(np.any(np.isnan(U[i+1])))
             #if np.any(np.isnan(U[i+1])) or np.any(np.isnan(Rho[i+1])):
             #    sys.exit()
@@ -234,5 +237,5 @@ for j in np.array([0.03,0.04]):
             #plt.legend()
             #plt.title()
             #plt.show()
-    build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/")
+#    build_and_save_HJ(U, Rho, parameters, pre_init_values, "Figures/")
 
